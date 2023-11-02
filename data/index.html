@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link type="text/css" rel="stylesheet" href="./style.css">
+    <title>Proyecto de Control de Foco y Escaneo de Red con ESP32</title>
+</head>
+
+<body>
+    <div class="container">
+        <div class="navbar">
+            <img src="../data/assets/ucb.png" alt="logoucb"></img>
+            <p id="fecha-hora" class="hora">Fecha y Hora: </p>
+        </div>
+        <div class="header-container">
+            <div class="header">
+                <h1>Proyecto de Control de Foco y <br>Escaneo de Red con ESP32</h1>
+                <p>Este proyecto utiliza un módulo ESP32 para crear un servidor web en una red WiFi local.<br>Permite
+                    escanear los dispositivos presentes en la red, controlar el encendido <br>y apagado de un foco y
+                    gestionar la seguridad de los dispositivos que intentan acceder.</p>
+                <img src="https://m.media-amazon.com/images/I/611SuZX5oYL._AC_UF1000,1000_QL80_.jpg" alt="ESP32">
+            </div>
+            <div class="content">
+                <div class="content__left">
+                    <img src="../data/assets/foco.png" alt="">
+                    <div class="content__left__title">
+                        <h2>Control de Foco</h2>
+                    </div>
+                    <div class="content__left__button">
+                        <button id="btnOn">ON</button>
+                        <button id="btnOff">OFF</button>
+                    </div>
+                    <p>Desde la interfaz web, se puede encender o apagar un foco conectado a un relay.</p>
+                </div>
+                <div class="content__right">
+                    <img src="../data/assets/escaneo-red.png" alt="">
+                    <div class="content__right__title">
+                        <h2>Escaneo de Red</h2>
+                    </div>
+                    <div class="content__right__button">
+                        <button id="btnScan">Scan</button>
+                    </div>
+                    <p>El ESP32 escanea la red WiFi y lista los dispositivos conectados mostrándolos en la interfaz web.
+                    </p>
+                </div>
+            </div>
+        </div>
+        <div class="content__right__table">
+            <table id="table">
+                <thead>
+                    <tr>
+                        <th>IP</th>
+                        <th>MAC</th>
+                        <th>HOST</th>
+                    </tr>
+                </thead>
+                <tbody id="tbody">
+                </tbody>
+            </table>
+        </div>
+        <div class="footer">
+            <p>Sólo los dispositivos previamente identificados pueden acceder al servidor y controlar el foco.
+                <br>Utiliza el IDE de Arduino para programar el ESP32. <br>Deberás incluir las bibliotecas necesarias
+                para manejar WiFi, servidor web y el sistema de archivos SPIFFS.</p>
+        </div>
+    </div>
+
+    <footer>
+        <h3>Proyecto de Control de Foco y Escaneo de Red con ESP32</h3>
+        <p>INTEGRANTES:</p>
+        <ul>
+            <li>José Antonio Campero Morales</li>
+            <li>María Fernanda Gutiérrez Sandoval</li>
+            <li>Miguel Alejandro Carrasco Cespedes</li>
+            <li>Guillermo Auza Banegas</li>
+        </ul>
+    </footer>
+</body>
+
+<script src="./script.js"></script>
+
+</html>
