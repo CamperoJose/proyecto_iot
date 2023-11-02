@@ -34,6 +34,11 @@ Sólo los dispositivos previamente identificados pueden acceder al servidor y co
 ### Código Arduino
 Utiliza el IDE de Arduino para programar el ESP32. Deberás incluir las bibliotecas necesarias para manejar WiFi, servidor web y el sistema de archivos SPIFFS.
 
+## Dependencias
+
+`WiFi.h`
+`ESP32Ping.h`: https://github.com/marian-craciunescu/ESP32Ping
+
 ## Notas Adicionales
 _2023/11/01_
 
