@@ -13,24 +13,25 @@ body {
     justify-content: space-between;
     align-items: center;
     background-color: #0a223d;
-    padding: 10px 50px;
+    padding: 10px;
+    flex-wrap: wrap;
 }
 
 .navbar p {
     font-weight: bold;
     color: #ffffff;
-    margin-right: 50px;
-    transition: color 0.3s ease;
+    margin-right: 20px;
 }
 
 .navbar img {
     width: 300px;
     margin: 10px;
-    transition: transform 0.3s ease;
 }
 
-.navbar img:hover {
-    transform: scale(1.1);
+.header-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
 }
 
 .header {
@@ -42,7 +43,6 @@ body {
     border-radius: 20px;
     color: white;
     margin: 20px auto;
-    box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
     width: fit-content;
     padding: 20px;
 }
@@ -60,18 +60,14 @@ body {
 
 .content {
     display: flex;
-    flex-direction: row;
-    justify-content: space-between;
+    flex-direction: column;
+    justify-content: center;
     align-items: center;
     margin: 20px auto;
-    transition: transform 0.3s ease;
 }
 
-.content:hover {
-    transform: scale(1.02);
-}
-
-.content__left, .content__right {
+.content__left,
+.content__right {
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -80,14 +76,19 @@ body {
     border-radius: 20px;
     color: white;
     margin: 20px auto;
-    box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
-    width: fit-content;
+    width: 500px;
     padding: 20px;
-    transition: background-color 0.3s ease;
 }
 
-.content__left:hover, .content__right:hover {
+.content__left:hover,
+.content__right:hover {
     background-color: #42439a;
+    transform: scale(1.02);
+}
+
+.content__left img,
+.content__right img {
+    height: 50px;
 }
 
 button {
@@ -99,7 +100,6 @@ button {
     background-color: #0a223d;
     color: white;
     border: none;
-    transition: all 0.3s ease;
 }
 
 button:hover {
@@ -111,7 +111,6 @@ button:hover {
     background-color: #1f4a71;
     border-radius: 20px;
     color: white;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
     margin: 20px auto;
     padding: 20px;
     width: fit-content;
@@ -122,15 +121,11 @@ table {
     border-collapse: collapse;
 }
 
-th, td {
+th,
+td {
     border: 1px solid white;
     padding: 10px;
     text-align: center;
-}
-
-th {
-    background-color: #1f4a71;
-    font-weight: bold;
 }
 
 .footer {
@@ -140,7 +135,6 @@ th {
     margin: 20px auto;
     padding: 10px 20px;
     text-align: center;
-    box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
     width: fit-content;
     display: flex;
     justify-content: space-between;
@@ -150,8 +144,6 @@ th {
 .footer p {
     margin: 0 10px;
     color: white;
-    text-decoration: none;
-    transition: color 0.3s ease;
 }
 
 footer {
@@ -159,7 +151,6 @@ footer {
     padding: 10px 20px;
     color: white;
     text-align: center;
-    border-top: 3px solid #16324f;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -177,3 +168,20 @@ footer ul {
 footer li {
     margin: 5px 0;
 }
+
+@media (max-width: 1300px) {
+
+    .navbar,
+    .header-container,
+    .content,
+    .footer,
+    footer {
+        flex-direction: column;
+    }
+
+    .navbar img {
+        width: 40%;
+        margin: 5px auto;
+    }
+}
+

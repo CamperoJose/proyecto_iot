@@ -7,6 +7,10 @@ function obtenerFechaHora() {
 function actualizarFechaHora() {
     const fechaHoraElemento = document.getElementById('fecha-hora');
     if (fechaHoraElemento) {
-        fechaHoraElemento.textContent = obtenerFechaHora();
+        fechaHoraElemento.textContent = "Fecha y Hora: " + obtenerFechaHora();
     }
 }
+
+document.addEventListener('DOMContentLoaded', function() {
+    actualizarFechaHora();
+});
