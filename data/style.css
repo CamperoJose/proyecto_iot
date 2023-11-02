@@ -4,7 +4,7 @@ body {
     font-family: 'Roboto', sans-serif;
     font-size: 1rem;
     color: #333;
-    background-color: #f4f4f4;
+    background-image: url('../data/assets/fondo.gif');
 }
 
 .navbar {
@@ -12,18 +12,25 @@ body {
     flex-direction: row;
     justify-content: space-between;
     align-items: center;
-    background-color: rgb(12, 12, 85);
+    background-color: #0a223d;
+    padding: 10px 50px;
 }
 
 .navbar p {
     font-weight: bold;
-    color: #fff;
+    color: #ffffff;
     margin-right: 50px;
+    transition: color 0.3s ease;
 }
 
 .navbar img {
     width: 300px;
     margin: 10px;
+    transition: transform 0.3s ease;
+}
+
+.navbar img:hover {
+    transform: scale(1.1);
 }
 
 .header {
@@ -31,11 +38,11 @@ body {
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    background-color: rgba(44, 45, 124, 0.708);
+    background-color: #1f4a71;
     border-radius: 20px;
     color: white;
     margin: 20px auto;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
     width: fit-content;
     padding: 20px;
 }
@@ -45,26 +52,42 @@ body {
     font-weight: bold;
 }
 
+.header img {
+    width: 400px;
+    margin: 20px;
+    border-radius: 30px;
+}
+
 .content {
     display: flex;
     flex-direction: row;
     justify-content: space-between;
     align-items: center;
     margin: 20px auto;
+    transition: transform 0.3s ease;
 }
 
-.content__left {
+.content:hover {
+    transform: scale(1.02);
+}
+
+.content__left, .content__right {
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    background-color: rgba(44, 45, 124, 0.708);
+    background-color: #1f4a71;
     border-radius: 20px;
     color: white;
     margin: 20px auto;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
     width: fit-content;
     padding: 20px;
+    transition: background-color 0.3s ease;
+}
+
+.content__left:hover, .content__right:hover {
+    background-color: #42439a;
 }
 
 button {
@@ -73,53 +96,19 @@ button {
     border-radius: 10px;
     margin: 5px;
     cursor: pointer;
-    background-color: rgb(12, 12, 85);
+    background-color: #0a223d;
     color: white;
     border: none;
+    transition: all 0.3s ease;
 }
 
 button:hover {
-    background-color: rgb(178, 173, 230);
-    border: 2px solid white;
-    color: white;
-    scale: 1.1;
-    transition: 0.5s;
-}
-
-.content__right {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    background-color: rgba(44, 45, 124, 0.708);
-    border-radius: 20px;
-    color: white;
-    margin: 20px auto;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
-    width: fit-content;
-    padding: 20px;
-}
-
-/* Estilos adicionales */
-
-.header img {
-    width: 200px;
-    border-radius: 15px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
-    margin: 20px 0;
-}
-
-.header p {
-    text-align: center;
-    margin: 10px 0;
-}
-
-.content__left__title, .content__right__title {
-    margin-bottom: 20px;
+    background-color: #1f4a71;
+    transform: scale(1.05);
 }
 
 .content__right__table {
-    background-color: rgba(44, 45, 124, 0.708);
+    background-color: #1f4a71;
     border-radius: 20px;
     color: white;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
@@ -140,27 +129,40 @@ th, td {
 }
 
 th {
-    background-color: rgb(12, 12, 85);
+    background-color: #1f4a71;
     font-weight: bold;
 }
 
 .footer {
-    background-color: rgba(44, 45, 124, 0.708);
+    background-color: #1f4a71;
     border-radius: 20px;
     color: white;
     margin: 20px auto;
-    padding: 20px;
+    padding: 10px 20px;
     text-align: center;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
     width: fit-content;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.footer p {
+    margin: 0 10px;
+    color: white;
+    text-decoration: none;
+    transition: color 0.3s ease;
 }
 
 footer {
-    background-color: rgb(12, 12, 85);
-    padding: 20px;
+    background-color: #0a223d;
+    padding: 10px 20px;
     color: white;
     text-align: center;
-    border-top: 5px solid rgba(44, 45, 124, 0.708);
+    border-top: 3px solid #16324f;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
 }
 
 footer h3 {
@@ -169,7 +171,6 @@ footer h3 {
 }
 
 footer ul {
-    list-style-type: none;
     padding: 0;
 }
 
