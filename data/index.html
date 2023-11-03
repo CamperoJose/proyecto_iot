@@ -48,10 +48,15 @@
             </div>
         </div>
         <div class="content__right__table">
+            <h3>Dispositivo de confianza</h3>
+            <p id="trustedDevice">IP: Ninguna</p>
+            <h3>Dispositivos en la red</h3>
             <table id="table">
                 <thead>
                     <tr>
-                        <th>Estado del foco</th>
+                        <th>IP</th>
+                        <th>Estado</th>
+                        <th>Acciones</th>
                     </tr>
                 </thead>
                 <tbody id="tbody">
@@ -87,6 +92,7 @@ document.addEventListener('DOMContentLoaded', function() {
     var btnScan = document.getElementById('btnScan');
     var tbody = document.getElementById('tbody');
     var ledStatus = document.getElementById('ledStatus');
+    var trustedDevice = document.getElementById('trustedDevice');
     
     function turnOn() {
         var xhttp = new XMLHttpRequest();
@@ -111,35 +117,64 @@ document.addEventListener('DOMContentLoaded', function() {
         xhttp.open("GET", "/turnOff", true);
         xhttp.send();
     }
-    
+
     function scanNetwork() {
+    var xhttp = new XMLHttpRequest();
+    xhttp.onreadystatechange = function() {
+        if (this.readyState == 4) {
+            if (this.status == 200) {
+                var response = JSON.parse(this.responseText);
+                updateTableWithIPs(response.successful_ips); // Asumiendo que tienes una función que actualiza la tabla.
+            } else {
+                console.error("Error al escanear la red: ", this.statusText);
+            }
+        }
+    };
+    xhttp.open("GET", "/getDevicesStatus", true);
+    xhttp.send();
+}
+
+    
+function updateTableWithIPs(ips) {
+    var table = document.getElementById("table"); 
+
+
+    for(var i = table.rows.length - 1; i > 0; i--) {
+        table.deleteRow(i);
+    }
+
+    ips.forEach(function(ip) {
+        var row = table.insertRow(-1);  // Inserta una nueva fila al final de la tabla.
+        var cell1 = row.insertCell(0);  // Inserta una nueva celda en la fila.
+        cell1.innerHTML = ip;           // Establece el contenido de la celda con la dirección IP.
+
+
+        var cell2 = row.insertCell(1);
+        cell2.innerHTML = "Conectado"; // Ejemplo de estado.
+
+        var cell3 = row.insertCell(2);
+        var button = document.createElement('button');
+        button.innerHTML = 'Acción';
+        button.onclick = function() {
+            // TODO: Definir post
+        };
+        cell3.appendChild(button);
+    });
+}
+
+
+    function setTrustedDevice(ip) {
         var xhttp = new XMLHttpRequest();
         xhttp.onreadystatechange = function() {
             if (this.readyState == 4 && this.status == 200) {
-                var data = JSON.parse(this.responseText);
-                updateTable(data.online_devices);
-                updateLedStatus(data.led_on);
+                trustedDevice.textContent = "IP: " + ip;
             }
         };
-        xhttp.open("GET", "/getDevicesStatus", true);
-        xhttp.send();
+        xhttp.open("POST", "/setMyDevice", true);
+        xhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+        xhttp.send("ip=" + ip);
     }
-    
-    function updateTable(devices) {
-        tbody.innerHTML = "";
-        for (var i = 0; i < devices.length; i++) {
-            var tr = document.createElement('tr');
-            var tdIP = document.createElement('td');
-            var tdStatus = document.createElement('td');
-            
-            tdIP.textContent = "192.168.1." + (i+1);
-            tdStatus.textContent = devices[i] ? "Conectado" : "Desconectado";
-            
-            tr.appendChild(tdIP);
-            tr.appendChild(tdStatus);
-            tbody.appendChild(tr);
-        }
-    }
+
     
     function updateLedStatus(isOn) {
         ledStatus.textContent = "El foco está: " + (isOn ? "Encendido" : "Apagado");
