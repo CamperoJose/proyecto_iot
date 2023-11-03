@@ -1,0 +1,4 @@
+POST http://192.168.0.38/setMyDevice
+Content-Type: application/x-www-form-urlencoded
+
+ip=192.168.0.5

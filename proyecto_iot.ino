@@ -5,6 +5,8 @@
 #include <ESPmDNS.h>
 #include <ESPAsyncWebServer.h>
 #include <SPIFFS.h>
+#include <vector>
+
 #define LED 2
 
 const int max_devices = 13;
@@ -12,39 +14,48 @@ int allowed_ips[] = {2};
 bool online_devices[max_devices] = {false};
 bool led_on = false;
 String ip_local="";
+std::vector<String> successful_ips;
+String my_device = ""; // Variable que almacenará la IP de 'my_device'
+
 
 AsyncWebServer server(80);
 
-void find_connected_devices()
-{
+void find_connected_devices() {
   bool ret;
-  for (int i = 1; i <= max_devices; i++)
-  {
+  std::vector<String> current_successful_ips;
+  for (int i = 1; i <= max_devices; i++) {
     IPAddress ip(ip_surname[0], ip_surname[1], ip_surname[2], i);
     ret = Ping.ping(ip, 2);
     online_devices[i - 1] = ret;
-    if (ret)
-    {
+    String ipStr = ip.toString();
+    if (ret) {
       Serial.print("Success: ");
-      Serial.print(ip);
-      
-      char host[16];
-      sprintf(host, "%d.%d.%d.%d", ip[0], ip[1], ip[2], ip[3]);
-      char resolved_name[32] = {0};
-      if(WiFi.hostByName(host, ip)) {
-        Serial.print(", Nombre de Host: ");
-        Serial.println(host);
-      } else {
-        Serial.println(", No se pudo resolver el nombre de Host");
-      }
-    }
-    else
-    {
+      Serial.println(ipStr);
+      current_successful_ips.push_back(ipStr);
+    } else {
       Serial.print("Error: ");
-      Serial.println(ip);
+      Serial.println(ipStr);
     }
   }
+
+  // Actualizar successful_ips con las IPs que tuvieron éxito
+  successful_ips = current_successful_ips;
 }
+
+void handle_my_device_led() {
+  bool my_device_found = std::find(successful_ips.begin(), successful_ips.end(), my_device) != successful_ips.end();
+  
+  if (my_device_found && !led_on) {
+    digitalWrite(LED, HIGH);
+    Serial.println("LED ON due to my_device");
+    led_on = true;
+  } else if (!my_device_found && led_on) {
+    digitalWrite(LED, LOW);
+    Serial.println("LED OFF due to my_device");
+    led_on = false;
+  }
+}
+
 
 void switch_led_if_any_allowed_connected()
 {
@@ -97,7 +108,6 @@ void setup()
   
   Serial.println(WiFi.localIP());  // Imprime la dirección IP del ESP32
 
-  find_connected_devices();
 
     // Ruta para cargar el archivo index.html
   server.on("/", HTTP_GET, [](AsyncWebServerRequest *request){
@@ -108,18 +118,35 @@ void setup()
             });     
 
 
-  server.on("/getDevicesStatus", HTTP_GET, [](AsyncWebServerRequest *request)
-            {
-    find_connected_devices();
-    switch_led_if_any_allowed_connected();
-    
+
+  server.on("/getDevicesStatus", HTTP_GET, [](AsyncWebServerRequest *request) {
     StaticJsonDocument<256> jsonDoc;
-    jsonDoc["online_devices"] = online_devices;
+    
+    JsonArray successfulIpsArray = jsonDoc.createNestedArray("successful_ips");
+
+    for (const String &ip : successful_ips) {
+        successfulIpsArray.add(ip);
+    }
+    
     jsonDoc["led_on"] = led_on;
 
     String response;
     serializeJson(jsonDoc, response);
-    request->send(200, "application/json", response); });
+    request->send(200, "application/json", response);
+  });
+
+server.on("/setMyDevice", HTTP_POST, [](AsyncWebServerRequest *request){
+  if (request->hasParam("ip", true)) {
+    AsyncWebParameter* p = request->getParam("ip", true);
+    my_device = p->value();
+    request->send(200, "text/plain", "IP set successfully");
+  } else {
+    request->send(400, "text/plain", "No IP provided");
+  }
+});
+
+
+    
 
   server.on("/turnOn", HTTP_GET, [](AsyncWebServerRequest *request)
             {
@@ -136,9 +163,9 @@ void setup()
   server.begin();
 }
 
-void loop()
-{
+void loop(){
   printArrayBool(online_devices, max_devices);
-  delay(1000);
   find_connected_devices();
+  switch_led_if_any_allowed_connected();
+  handle_my_device_led();
 }
