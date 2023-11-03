@@ -107,6 +107,7 @@ void setup()
             request->send(SPIFFS, "/style.css", "text/css");
             });     
 
+
   server.on("/getDevicesStatus", HTTP_GET, [](AsyncWebServerRequest *request)
             {
     find_connected_devices();

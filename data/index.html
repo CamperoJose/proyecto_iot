@@ -51,8 +51,7 @@
             <table id="table">
                 <thead>
                     <tr>
-                        <th>IP</th>
-                        <th>Estado</th>
+                        <th>Estado del foco</th>
                     </tr>
                 </thead>
                 <tbody id="tbody">
@@ -80,24 +79,9 @@
 </body>
 
 <script>
-    function obtenerFechaHora() {
-    const ahora = new Date();
-    const opciones = { year: 'numeric', month: 'long', day: 'numeric', hour: 'numeric', minute: 'numeric', second: 'numeric', hour12: false };
-    return ahora.toLocaleDateString('es-ES', opciones);
-}
-
-function actualizarFechaHora() {
-    const fechaHoraElemento = document.getElementById('fecha-hora');
-    if (fechaHoraElemento) {
-        fechaHoraElemento.textContent = "Fecha y Hora: " + obtenerFechaHora();
-    }
-}
 
 document.addEventListener('DOMContentLoaded', function() {
     actualizarFechaHora();
-});
-
-document.addEventListener("DOMContentLoaded", function() {
     var btnOn = document.getElementById('btnOn');
     var btnOff = document.getElementById('btnOff');
     var btnScan = document.getElementById('btnScan');
@@ -105,31 +89,40 @@ document.addEventListener("DOMContentLoaded", function() {
     var ledStatus = document.getElementById('ledStatus');
     
     function turnOn() {
-        fetch('http://IP_DEL_ESP32/turnOn')
-            .then(response => response.json())
-            .then(data => {
+        var xhttp = new XMLHttpRequest();
+        xhttp.onreadystatechange = function() {
+            if (this.readyState == 4 && this.status == 200) {
+                var data = JSON.parse(this.responseText);
                 updateLedStatus(data.led_on);
-            })
-            .catch(error => console.error('Error:', error));
+            }
+        };
+        xhttp.open("GET", "/turnOn", true);
+        xhttp.send();
     }
 
     function turnOff() {
-        fetch('http://IP_DEL_ESP32/turnOff')
-            .then(response => response.json())
-            .then(data => {
+        var xhttp = new XMLHttpRequest();
+        xhttp.onreadystatechange = function() {
+            if (this.readyState == 4 && this.status == 200) {
+                var data = JSON.parse(this.responseText);
                 updateLedStatus(data.led_on);
-            })
-            .catch(error => console.error('Error:', error));
+            }
+        };
+        xhttp.open("GET", "/turnOff", true);
+        xhttp.send();
     }
     
     function scanNetwork() {
-        fetch('http://IP_DEL_ESP32/getDevicesStatus')
-            .then(response => response.json())
-            .then(data => {
+        var xhttp = new XMLHttpRequest();
+        xhttp.onreadystatechange = function() {
+            if (this.readyState == 4 && this.status == 200) {
+                var data = JSON.parse(this.responseText);
                 updateTable(data.online_devices);
                 updateLedStatus(data.led_on);
-            })
-            .catch(error => console.error('Error:', error));
+            }
+        };
+        xhttp.open("GET", "/getDevicesStatus", true);
+        xhttp.send();
     }
     
     function updateTable(devices) {
@@ -156,6 +149,20 @@ document.addEventListener("DOMContentLoaded", function() {
     btnOff.addEventListener('click', turnOff);
     btnScan.addEventListener('click', scanNetwork);
 });
+
+function obtenerFechaHora() {
+    const ahora = new Date();
+    const opciones = { year: 'numeric', month: 'long', day: 'numeric', hour: 'numeric', minute: 'numeric', second: 'numeric', hour12: false };
+    return ahora.toLocaleDateString('es-ES', opciones);
+}
+
+function actualizarFechaHora() {
+    const fechaHoraElemento = document.getElementById('fecha-hora');
+    if (fechaHoraElemento) {
+        fechaHoraElemento.textContent = "Fecha y Hora: " + obtenerFechaHora();
+    }
+}
+
 
 </script>
 
