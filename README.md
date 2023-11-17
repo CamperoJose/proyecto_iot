@@ -53,3 +53,7 @@ const int ip_surname[3] = {192, 168, 0}; // Los primeros 3 octetos de la IP de t
 De momento se debe fijar de antemano los ip de los dispositivos que tienen autorizacion para controlar el foco. Para ello se debe modificar la variable `allowed_ips` en el archivo `proyecto_iot.ino` con el último octeto del ip de los dispositivos autorizados.
 
 Dado que el programa utiliza el protocolo ping para verificar si los dispositivos están conectados a la red, es necesario que el router tenga habilitado el protocolo ICMP. **Nótese que esto tiene un efecto que demora considerablemente el tiempo entre que un dispositivo se conecta y el ESP32 se enciende**. En el peor de los casos no hay ningún dispositivo conectado más que el router y cada solicitud tiene una demora máxima. Por ejemplo, si se tienen 255 dispositivos conectados, el tiempo máximo de espera es de 255 segundos (4.25 minutos) Por instancia de ping. 
+
+
+## Modelo de BDD
+![Modelo de Base de Datos](database/modelo_bdd.png)
