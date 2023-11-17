@@ -1,2 +1,7 @@
 #Ignorar las configuraciones por favor define tu SSID y PASSWORD localmente
 config.h
+
+#ignorar las carpetas de IDEs
+.vscode
+.idea
+```
