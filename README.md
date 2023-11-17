@@ -1,7 +1,10 @@
 # Proyecto de Control de Foco y Escaneo de Red con ESP32
 Este proyecto utiliza un módulo ESP32 para crear un servidor web en una red WiFi local. Permite escanear los dispositivos presentes en la red, controlar el encendido y apagado de un foco y gestionar la seguridad de los dispositivos que intentan acceder.
 
-![ESP32](https://media.tenor.com/4B8pbZNr0_YAAAAC/esp32devkit-esp32.gif)
+<div align="center">
+    <img src="https://media.tenor.com/4B8pbZNr0_YAAAAC/esp32devkit-esp32.gif" height="250px">
+    <img src="https://mir-s3-cdn-cf.behance.net/project_modules/hd/e69ab290704783.5e39e8ad5f86f.gif" height="250px">
+</div>
 
 ## Características
 - **Carpeta data**: Contiene el archivo `index.html` que se sirve al cliente para mostrar la interfaz de usuario.
