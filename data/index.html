@@ -64,6 +64,25 @@
         </div>
 
         <div class="content__right">
+            <h2>REGISTRAR DISPOSITIVO</h2>
+            <form id="registerForm">
+                <div class="input-group">
+                    <label for="deviceName">Nombre del dispositivo:</label>
+                    <input type="text" id="deviceName" name="deviceName" required>
+                </div>
+                <div class="input-group">
+                    <label for="ipSelect">Seleccione una IP:</label>
+                    <select id="ipSelect" name="ipSelect" required>
+                        <!-- IP options will be populated here -->
+                    </select>
+                </div>
+                <div class="input-group">
+                    <button type="submit">REGISTRAR</button>
+                </div>
+            </form>
+        </div>
+
+        <div class="content__right">
             <img src="../data/assets/escaneo-red.png" alt="">
             <div class="content__right__title">
                 <h2>Escaneo de Red</h2>
