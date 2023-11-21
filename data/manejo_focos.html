@@ -10,10 +10,13 @@
 
 <body>
     <div class="container">
+        <!-- Navbar -->
         <div class="navbar">
-            <img src="../data/assets/ucb.png" alt="logoucb"></img>
+            <img src="../data/assets/ucb.png" alt="logoucb">
             <p id="fecha-hora" class="hora">Fecha y Hora: </p>
         </div>
+
+        <!-- Header -->
         <div class="header-container">
             <div class="header">
                 <h1>Proyecto de Control de Foco y <br>Escaneo de Red con ESP32</h1>
@@ -22,60 +25,50 @@
                     gestionar la seguridad de los dispositivos que intentan acceder.</p>
                 <img src="https://m.media-amazon.com/images/I/611SuZX5oYL._AC_UF1000,1000_QL80_.jpg" alt="ESP32">
             </div>
+        </div>
 
-            
-            
-            <div class="content">
-
-                <div class="content__left">
-                    <div class="content__left__title">
-                        <h2>Control de Foco de la SALA: </h2>
-                    </div>
-                    <img src="../data/assets/1.svg" alt="">
-                    <div class="content__left__button">
-                        <button style="background-color: green" id="btnOn">ON</button>
-                        <button style="background-color: red" id="btnOff">OFF</button>
-                    </div>
+        <!-- Content -->
+        <div class="content">
+            <!-- Control de Focos Múltiples -->
+            <div class="multiple-lights-control">
+                <h2>Control de Focos Múltiples</h2>
+                <!-- Control de Foco: Cocina -->
+                <div class="light-control" id="light-control-kitchen">
+                    <h3>Cocina</h3>
+                    <button id="btnKitchenOn">ON</button>
+                    <button id="btnKitchenOff">OFF</button>
+                    <p>Controla el foco de la cocina.</p>
                 </div>
-
-                <div class="content__left">
-                    <div class="content__left__title">
-                        <h2>Control de Foco del DORMITORIO: </h2>
-                    </div>
-                    <img src="../data/assets/2.svg" alt="">
-                    <div class="content__left__button">
-                        <button style="background-color: green" id="btnOn">ON</button>
-                        <button style="background-color: red" id="btnOff">OFF</button>
-                    </div>
+                <!-- Control de Foco: Sala -->
+                <div class="light-control" id="light-control-living-room">
+                    <h3>Sala</h3>
+                    <button id="btnLivingRoomOn">ON</button>
+                    <button id="btnLivingRoomOff">OFF</button>
+                    <p>Controla el foco de la sala.</p>
                 </div>
-
-                <div class="content__left">
-                    <div class="content__left__title">
-                        <h2>Control de Foco de la COCINA: </h2>
-                    </div>
-                    <img  src="../data/assets/3.svg" alt="">
-                    <div class="content__left__button">
-                        <button style="background-color: green" id="btnOn">ON</button>
-                        <button style="background-color: red" id="btnOff">OFF</button>
-                    </div>
+                <!-- Control de Foco: Dormitorio -->
+                <div class="light-control" id="light-control-bedroom">
+                    <h3>Dormitorio</h3>
+                    <button id="btnBedroomOn">ON</button>
+                    <button id="btnBedroomOff">OFF</button>
+                    <p>Controla el foco del dormitorio.</p>
                 </div>
+            </div>
 
+            <!-- Escaneo de Red -->
+            <div class="content__right">
+                <img src="../data/assets/escaneo-red.png" alt="">
+                <div class="content__right__title">
+                    <h2>Escaneo de Red</h2>
+                </div>
+                <div class="content__right__button">
+                    <button id="btnScan">Scan</button>
+                </div>
+                <p>El ESP32 escanea la red WiFi y lista los dispositivos conectados mostrándolos en la interfaz web.</p>
             </div>
         </div>
 
-        <div class="content__right">
-            <img src="../data/assets/escaneo-red.png" alt="">
-            <div class="content__right__title">
-                <h2>Escaneo de Red</h2>
-            </div>
-            <div class="content__right__button">
-                <button id="btnScan">Scan</button>
-            </div>
-            <p>El ESP32 escanea la red WiFi y lista los dispositivos conectados mostrándolos en la interfaz web.
-            </p>
-        </div>
-
-
+        <!-- Dispositivos en la Red -->
         <div class="content__right__table">
             <h3>Dispositivo de confianza</h3>
             <p id="trustedDevice">IP: Ninguna</p>
@@ -93,6 +86,8 @@
             </table>
             <p id="ledStatus"></p>
         </div>
+
+        <!-- Footer -->
         <div class="footer">
             <p>Sólo los dispositivos previamente identificados pueden acceder al servidor y controlar el foco.
                 <br>Utiliza el IDE de Arduino para programar el ESP32. <br>Deberás incluir las bibliotecas necesarias
@@ -100,6 +95,7 @@
         </div>
     </div>
 
+    <!-- Footer Global -->
     <footer>
         <h3>Proyecto de Control de Foco y Escaneo de Red con ESP32</h3>
         <p>INTEGRANTES:</p>
@@ -111,6 +107,7 @@
         </ul>
     </footer>
 </body>
+
 
 <script>
 
