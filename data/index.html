@@ -63,6 +63,9 @@
             </div>
         </div>
 
+        <div id="messageContainer" style="color: green; margin-top: 10px;"></div>
+
+
         <div class="content__right">
             <h2>REGISTRAR DISPOSITIVO</h2>
             <form id="registerForm">
@@ -76,6 +79,17 @@
                         <!-- IP options will be populated here -->
                     </select>
                 </div>
+
+                <div class="input-group" style="margin-bottom: 10px;">
+                    <label for="deviceLocation" style="display: block; margin-bottom: 5px; color: #ffffff; font-weight: bold;">Ubicación del foco:</label>
+                    <select id="deviceLocation" name="deviceLocation" required style="width: 100%; padding: 5px; border: 1px solid #ddd; border-radius: 4px;">
+                        <option value="1">Foco Sala</option>
+                        <option value="2">Foco Cocina</option>
+                        <option value="3">Foco Dormitorio</option>
+                    </select>
+                </div>
+                
+                
                 <div class="input-group">
                     <button type="submit">REGISTRAR</button>
                 </div>
@@ -143,16 +157,46 @@ document.addEventListener('DOMContentLoaded', function() {
     var trustedDevice = document.getElementById('trustedDevice');
     
     function turnOn() {
-        var xhttp = new XMLHttpRequest();
-        xhttp.onreadystatechange = function() {
-            if (this.readyState == 4 && this.status == 200) {
-                var data = JSON.parse(this.responseText);
-                updateLedStatus(data.led_on);
-            }
-        };
-        xhttp.open("GET", "/turnOn", true);
-        xhttp.send();
-    }
+    // Primera solicitud: GET para encender el LED
+    var xhttp = new XMLHttpRequest();
+    xhttp.onreadystatechange = function() {
+        if (this.readyState == 4 && this.status == 200) {
+            var data = JSON.parse(this.responseText);
+            updateLedStatus(data.led_on);
+
+            var xhttpPost = new XMLHttpRequest();
+            xhttpPost.onreadystatechange = function() {
+                if (this.readyState == 4) {
+                    if (this.status == 200) {
+                        console.log('Acción registrada con éxito');
+                    } else {
+                        console.error('Error al registrar la acción: ', this.responseText);
+                    }
+                }
+            };
+
+            const currentDateTime = new Date().toISOString().slice(0, 19).replace('T', ' ');
+
+            const postData = JSON.stringify({
+                description: "Encendido de LED",
+                datetime: currentDateTime, // Fecha y hora en formato compatible con MySQL
+                ledsLedId: 1, // Asumiendo un LED_ID constante
+                usersUserId: 1  // Asumiendo un USER_ID constante
+            });
+
+            xhttpPost.open("POST", "http://localhost:3000/api/v1/actions", true);
+            xhttpPost.setRequestHeader("Content-Type", "application/json");
+            xhttpPost.send(postData);
+        }
+    };
+    xhttp.open("GET", "/turnOn", true);
+    xhttp.send();
+}
+
+
+
+
+
 
     function turnOff() {
         var xhttp = new XMLHttpRequest();
@@ -208,6 +252,7 @@ function updateTableWithIPs(ips) {
         };
         cell3.appendChild(button);
     });
+    updateIpSelect(ips);
 }
 
 
@@ -245,6 +290,63 @@ function actualizarFechaHora() {
         fechaHoraElemento.textContent = "Fecha y Hora: " + obtenerFechaHora();
     }
 }
+
+function updateIpSelect(ips) {
+    var ipSelect = document.getElementById("ipSelect"); 
+
+    // Eliminar las opciones existentes
+    while (ipSelect.firstChild) {
+        ipSelect.removeChild(ipSelect.firstChild);
+    }
+
+    // Agregar nuevas opciones
+    ips.forEach(function(ip) {
+        var option = document.createElement('option');
+        option.value = ip;
+        option.text = ip;
+        ipSelect.appendChild(option);
+    });
+}
+
+
+document.getElementById('registerForm').addEventListener('submit', function(event) {
+    event.preventDefault(); // Evitar el envío del formulario por defecto
+
+    // Obtener los valores del formulario
+    var deviceName = document.getElementById('deviceName').value;
+    var ipv4 = document.getElementById('ipSelect').value;
+    var led = document.getElementById('deviceLocation').value;
+
+    // Crear el objeto con los datos a enviar
+    var data = {
+        user_id: 2,
+        device_name: deviceName,
+        ipv4: ipv4,
+        scopes: ["ENCENDER_LED", "APAGAR_LED"],
+        led: led
+    };
+
+    // Realizar la solicitud POST
+    var xhttp = new XMLHttpRequest();
+    xhttp.onreadystatechange = function() {
+        if (this.readyState == 4) {
+            console.log('Response:', this.responseText); // Mostrar la respuesta completa por consola
+            var message = "";
+            if (this.status == 200) {
+                message = "Éxito registrando el dispositivo";
+            } else {
+                // Si la solicitud no fue exitosa, se muestra un mensaje genérico de error
+                message = "Error registrando el dispositivo";
+            }
+            console.log(message); // Mostrar el mensaje por consola
+            alert(message); // O puedes usar otro elemento para mostrar el mensaje en la página
+        }
+    };
+    xhttp.open("POST", "http://localhost:3000/api/v1/devices", true);
+    xhttp.setRequestHeader("Content-Type", "application/json");
+    xhttp.send(JSON.stringify(data));
+});
+
 
 
 </script>
