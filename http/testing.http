@@ -1,0 +1,38 @@
+###
+GET http://localhost:3000/api/v1/user/100
+
+
+###
+POST http://localhost:3000/api/v1/login
+Content-Type: application/json
+
+{
+    "username": "superusedr",
+    "password": "123456"
+}
+###
+POST http://localhost:3000/api/v1/register
+Content-Type: application/json
+
+{
+    "id_user_admin": 3,
+    "name": "juan perez",
+    "username": "juan22",
+    "password": "4321",
+    "administrator": 0
+}
+###
+GET http://localhost:3000/api/v1/devices
+
+###
+POST http://localhost:3000/api/v1/devices
+Content-Type: application/json
+
+{
+    "user_id": 2,
+    "device_name": "iphone de juan",
+    "ipv4": "192.168.10.10",
+    "scopes": ["ENCENDER_LED", "APAGAR_LED"],
+    "led": 1
+}
+###
