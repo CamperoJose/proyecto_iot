@@ -31,8 +31,24 @@ Content-Type: application/json
 {
     "user_id": 2,
     "device_name": "iphone de juan",
-    "ipv4": "192.168.10.10",
+    "ipv4": "192.168.10.11",
     "scopes": ["ENCENDER_LED", "APAGAR_LED"],
     "led": 1
 }
 ###
+
+###
+# Obtener todas las acciones
+GET http://localhost:3000/api/v1/actions
+
+###
+# Crear una nueva acción
+POST http://localhost:3000/api/v1/actions
+Content-Type: application/json
+
+{
+    "description": "Encendido de LED",
+    "datetime": "2023-11-22T15:00:00",
+    "ledsLedId": 2,
+    "usersUserId": 1
+}
