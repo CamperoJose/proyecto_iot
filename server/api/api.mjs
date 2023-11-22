@@ -1,6 +1,7 @@
 import express from 'express';
 
 import UserBl from '../bl/UserBl.mjs';
+import DeviceBl from '../bl/DeviceBl.mjs';
 
 const router = express.Router();
 
@@ -37,6 +38,29 @@ router.post('/login', async (req, res) => {
         res.status(200).send(authn);
     } catch (error) {
         res.status(403).send(error.message);
+    }
+});
+
+// LISTAR DISPOSITIVOS
+router.get('/devices', async (req, res) => {
+    const deviceBl = new DeviceBl();
+    try {
+        const devices = await deviceBl.listAllDevices();
+        res.status(200).send(devices);
+    } catch (error) {
+        res.status(404).send(error.message);
+    }
+});
+
+// AÑADIR NUEVO DISPOSITIVO
+router.post('/devices', async (req, res) => {
+    const { user_id, device_name, ipv4, scopes, led } = req.body;
+    const deviceBl = new DeviceBl();
+    try {
+        const new_device = await deviceBl.createDevice(device_name, ipv4, user_id, scopes, led);
+        res.status(200).send(new_device);
+    } catch (error) {
+        res.status(500).send(error.message);
     }
 });
 
