@@ -6,7 +6,8 @@ class AuthorizationDao {
     }
 
     async authoriseLedAndScopeToDevice(deviceId, ledId, scopeId) {
-        const [rows] = await this.connection.promise().query(`INSERT INTO AUTHORIZATION (DEVICES_DEVICE_ID, LEDS_LED_ID, SCOPES_SCOPE_ID) VALUES (${deviceId}, ${ledId}, ${scopeId})`);
+        const [rows] = await this.connection.promise().query(
+            `INSERT INTO AUTHORIZATION (DEVICES_DEVICE_ID, LEDS_LED_ID, SCOPES_SCOPE_ID) VALUES (${deviceId}, ${ledId}, ${scopeId})`);
         return rows;
     }
 

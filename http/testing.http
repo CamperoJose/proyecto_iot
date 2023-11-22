@@ -22,3 +22,17 @@ Content-Type: application/json
     "administrator": 0
 }
 ###
+GET http://localhost:3000/api/v1/devices
+
+###
+POST http://localhost:3000/api/v1/devices
+Content-Type: application/json
+
+{
+    "user_id": 2,
+    "device_name": "iphone de juan",
+    "ipv4": "192.168.10.10",
+    "scopes": ["ENCENDER_LED", "APAGAR_LED"],
+    "led": 1
+}
+###
