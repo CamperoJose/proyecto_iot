@@ -31,7 +31,6 @@ class HActionDao {
         return rows;
     }
 
-    // Aquí puedes añadir otros métodos que consideres necesarios para la gestión de acciones.
 }
 
 export default HActionDao;
