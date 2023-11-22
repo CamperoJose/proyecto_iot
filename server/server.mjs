@@ -2,26 +2,24 @@
 import express from "express";
 // import cors
 import bodyParser from 'body-parser';
- 
 import cors from "cors";
- 
 // import routes
 import router from "./api/api.mjs";
 
 // init express
 const app = express();
-  
+
 // use express json
 app.use(express.json());
 
-// use cors
+// use cors to allow all origins
 app.use(cors({
-    origin: 'http://localhost:8080'
+    origin: '*' // Permitir cualquier origen
 }));
- 
+
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
-  
+
 // use router
 app.use('/api/v1', router);
 
