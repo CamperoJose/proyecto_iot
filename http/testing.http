@@ -52,3 +52,6 @@ Content-Type: application/json
     "ledsLedId": 2,
     "usersUserId": 1
 }
+
+### date
+GET http://localhost:3000/api/v1/currentDateTime

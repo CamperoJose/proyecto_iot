@@ -22,6 +22,57 @@ String my_device = ""; // Variable que almacenará la IP de 'my_device'
 
 
 AsyncWebServer server(80);
+String getCurrentDateTimeFromServer() {
+  HTTPClient http;
+  http.begin("http://192.168.0.7:3000/api/v1/currentDateTime");
+  int httpCode = http.GET();
+
+  if (httpCode > 0) {
+    String payload = http.getString();
+    DynamicJsonDocument doc(256);
+    deserializeJson(doc, payload);
+    String datetime = doc["datetime"].as<String>();
+
+    Serial.println("Datetime extraído: " + datetime);
+    http.end();
+    return datetime;
+  } else {
+    Serial.println("Error en la solicitud GET: " + String(httpCode));
+    http.end();
+    return "";
+  }
+}
+
+void sendPostRequest(int ledId, int userId, const char* description) {
+  HTTPClient http;
+  http.begin("http://192.168.0.7:3000/api/v1/actions");
+  http.addHeader("Content-Type", "application/json");
+
+  DynamicJsonDocument doc(256);
+
+  
+  doc["description"] = description;
+  doc["datetime"] = getCurrentDateTimeFromServer();
+  doc["ledsLedId"] = ledId;
+  doc["usersUserId"] = userId;
+
+  String requestBody;
+  serializeJson(doc, requestBody);
+
+  int httpCode = http.POST(requestBody);
+
+  if (httpCode > 0) {
+    String payload = http.getString();
+    Serial.println("Respuesta POST: " + payload);
+  } else {
+    Serial.println("Error en la solicitud POST: " + String(httpCode));
+  }
+  
+  http.end();
+}
+
+
+
 
 void find_connected_devices() {
   bool ret;
@@ -35,9 +86,6 @@ void find_connected_devices() {
     
     DynamicJsonDocument doc(2048);
     deserializeJson(doc, payload);
-
-
-
 
   for (int i = 1; i <= max_devices; i++) {
     IPAddress ip(ip_surname[0], ip_surname[1], ip_surname[2], i);
@@ -56,7 +104,14 @@ void find_connected_devices() {
         ip.fromString(ipv4);
         
         if (ip.toString() == ipStr) {
-          digitalWrite(pin, HIGH);  // Enciende el LED
+          //verificar si pin esta HIGH:
+          //if (digitalRead(pin) == LOW) {
+          String datetime = device["LEDS_LED_ID"].as<String>();
+
+    Serial.println("int led extraído: " + datetime);
+            sendPostRequest(device["LEDS_LED_ID"], device["USERS_USER_ID"], "Encendido de FOCO por conexión a la red");
+          //}
+          digitalWrite(pin, HIGH); 
           break;
         }
     }
@@ -72,6 +127,9 @@ void find_connected_devices() {
         ip.fromString(ipv4);
         
         if (ip.toString() == ipStr) {
+          //if (digitalRead(pin) == HIGH) {
+            sendPostRequest(device["LEDS_LED_ID"], device["USERS_USER_ID"], "Apagado de FOCO por desconexión de la red");
+          //}
           digitalWrite(pin, LOW);  // Enciende el LED
           break;
         }
