@@ -88,4 +88,9 @@ router.post('/actions', async (req, res) => {
     }
 });
 
+router.get('/currentDateTime', (req, res) => {
+    const currentDateTime = new Date().toISOString().slice(0, 19).replace('T', ' ');
+    res.status(200).send({ datetime: currentDateTime });
+});
+
 export default router;
