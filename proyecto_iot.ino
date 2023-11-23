@@ -213,12 +213,25 @@ void setup()
 
     // Ruta para cargar el archivo index.html
   server.on("/", HTTP_GET, [](AsyncWebServerRequest *request){
+    request->send(SPIFFS, "/login.html",String(), false);
+  });
+
+  server.on("/index.html", HTTP_GET, [](AsyncWebServerRequest *request){
     request->send(SPIFFS, "/index.html",String(), false);
   });
+
+  server.on("/style1.css", HTTP_GET, [](AsyncWebServerRequest *request){
+            request->send(SPIFFS, "/style1.css", "text/css");
+            });     
+
+  
   server.on("/style.css", HTTP_GET, [](AsyncWebServerRequest *request){
             request->send(SPIFFS, "/style.css", "text/css");
             });     
 
+  server.on("/script.js", HTTP_GET, [](AsyncWebServerRequest *request){
+            request->send(SPIFFS, "/script.js", "text/css");
+            });    
 
 
   server.on("/getDevicesStatus", HTTP_GET, [](AsyncWebServerRequest *request) {

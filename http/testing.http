@@ -7,15 +7,15 @@ POST http://localhost:3000/api/v1/login
 Content-Type: application/json
 
 {
-    "username": "superusedr",
-    "password": "123456"
+    "username": "juan22",
+    "password": "4321"
 }
 ###
 POST http://localhost:3000/api/v1/register
 Content-Type: application/json
 
 {
-    "id_user_admin": 3,
+    "id_user_admin": 1,
     "name": "juan perez",
     "username": "juan22",
     "password": "4321",
