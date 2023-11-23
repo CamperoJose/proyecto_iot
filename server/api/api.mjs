@@ -2,6 +2,7 @@ import express from 'express';
 
 import UserBl from '../bl/UserBl.mjs';
 import DeviceBl from '../bl/DeviceBl.mjs';
+import HActionBl from '../bl/HActionBl.mjs';
 
 const router = express.Router();
 
@@ -59,6 +60,29 @@ router.post('/devices', async (req, res) => {
     try {
         const new_device = await deviceBl.createDevice(device_name, ipv4, user_id, scopes, led);
         res.status(200).send(new_device);
+    } catch (error) {
+        res.status(500).send(error.message);
+    }
+});
+
+// OBTENER TODOS LOS ACTION
+router.get('/actions', async (req, res) => {
+    const hActionBl = new HActionBl();
+    try {
+        const actions = await hActionBl.getAllActions();
+        res.status(200).send(actions);
+    } catch (error) {
+        res.status(404).send(error.message);
+    }
+});
+
+// CREAR UN NUEVO ACTION
+router.post('/actions', async (req, res) => {
+    const { description, datetime, ledsLedId, usersUserId } = req.body;
+    const hActionBl = new HActionBl();
+    try {
+        const result = await hActionBl.createHAction(description, datetime, ledsLedId, usersUserId);
+        res.status(200).send(result);
     } catch (error) {
         res.status(500).send(error.message);
     }

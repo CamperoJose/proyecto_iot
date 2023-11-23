@@ -61,6 +61,9 @@
             </div>
         </div>
 
+        <div id="messageContainer" style="color: green; margin-top: 10px;"></div>
+
+
         <div class="content__right">
             <h2>REGISTRAR DISPOSITIVO</h2>
             <form id="registerForm">
@@ -74,7 +77,18 @@
                         <!-- IP options will be populated here -->
                     </select>
                 </div>
-                <div class="input-group-button">
+
+                <div class="input-group" style="margin-bottom: 10px;">
+                    <label for="deviceLocation" style="display: block; margin-bottom: 5px; color: #ffffff; font-weight: bold;">Ubicación del foco:</label>
+                    <select id="deviceLocation" name="deviceLocation" required style="width: 100%; padding: 5px; border: 1px solid #ddd; border-radius: 4px;">
+                        <option value="1">Foco Sala</option>
+                        <option value="2">Foco Cocina</option>
+                        <option value="3">Foco Dormitorio</option>
+                    </select>
+                </div>
+                
+                
+                <div class="input-group">
                     <button type="submit">REGISTRAR</button>
                 </div>
             </form>
@@ -128,27 +142,28 @@
         </ul>
     </footer>
 
-    <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            actualizarFechaHora();
-            var btnOn = document.getElementById('btnOn');
-            var btnOff = document.getElementById('btnOff');
-            var btnScan = document.getElementById('btnScan');
-            var tbody = document.getElementById('tbody');
-            var ledStatus = document.getElementById('ledStatus');
-            var trustedDevice = document.getElementById('trustedDevice');
+<script>
 
-            function turnOn() {
-                var xhttp = new XMLHttpRequest();
-                xhttp.onreadystatechange = function () {
-                    if (this.readyState == 4 && this.status == 200) {
-                        var data = JSON.parse(this.responseText);
-                        updateLedStatus(data.led_on);
-                    }
-                };
-                xhttp.open("GET", "/turnOn", true);
-                xhttp.send();
+document.addEventListener('DOMContentLoaded', function() {
+    actualizarFechaHora();
+    var btnOn = document.getElementById('btnOn');
+    var btnOff = document.getElementById('btnOff');
+    var btnScan = document.getElementById('btnScan');
+    var tbody = document.getElementById('tbody');
+    var ledStatus = document.getElementById('ledStatus');
+    var trustedDevice = document.getElementById('trustedDevice');
+    
+    function turnOn() {
+        var xhttp = new XMLHttpRequest();
+        xhttp.onreadystatechange = function() {
+            if (this.readyState == 4 && this.status == 200) {
+                var data = JSON.parse(this.responseText);
+                updateLedStatus(data.led_on);
             }
+        };
+        xhttp.open("GET", "/turnOn", true);
+        xhttp.send();
+    }
 
             function turnOff() {
                 var xhttp = new XMLHttpRequest();
@@ -192,15 +207,16 @@
                     var cell2 = row.insertCell(1);
                     cell2.innerHTML = "Conectado";
 
-                    var cell3 = row.insertCell(2);
-                    var button = document.createElement('button');
-                    button.innerHTML = 'Acción';
-                    button.onclick = function () {
-                        // TODO: Definir acción para el botón
-                    };
-                    cell3.appendChild(button);
-                });
-            }
+        var cell3 = row.insertCell(2);
+        var button = document.createElement('button');
+        button.innerHTML = 'Acción';
+        button.onclick = function() {
+            // TODO: Definir post
+        };
+        cell3.appendChild(button);
+    });
+}
+
 
             function setTrustedDevice(ip) {
                 var xhttp = new XMLHttpRequest();
@@ -229,13 +245,14 @@
             return ahora.toLocaleDateString('es-ES', opciones);
         }
 
-        function actualizarFechaHora() {
-            const fechaHoraElemento = document.getElementById('fecha-hora');
-            if (fechaHoraElemento) {
-                fechaHoraElemento.textContent = "Fecha y Hora: " + obtenerFechaHora();
-            }
-        }
-    </script>
-</body>
+function actualizarFechaHora() {
+    const fechaHoraElemento = document.getElementById('fecha-hora');
+    if (fechaHoraElemento) {
+        fechaHoraElemento.textContent = "Fecha y Hora: " + obtenerFechaHora();
+    }
+}
+
+
+</script>
 
 </html>
