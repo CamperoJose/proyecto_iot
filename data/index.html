@@ -24,7 +24,6 @@
             </div>
 
             <div class="content">
-
                 <div class="content__left">
                     <div class="content__left__title">
                         <h2>Control de Foco de la SALA: </h2>
@@ -57,19 +56,17 @@
                         <button style="background-color: red" id="btnOff">OFF</button>
                     </div>
                 </div>
-
             </div>
         </div>
 
         <div id="messageContainer" style="color: green; margin-top: 10px;"></div>
-
 
         <div class="content__right">
             <h2>REGISTRAR DISPOSITIVO</h2>
             <form id="registerForm">
                 <div class="input-group">
                     <label for="deviceName">Nombre del dispositivo:</label>
-                    <input type="text" id="deviceName" name="deviceName" placeholder="Ingrese el nombre del dispositivo" required>
+                    <input type="text" id="deviceName" name="deviceName" required>
                 </div>
                 <div class="input-group">
                     <label for="ipSelect">Seleccione una IP:</label>
@@ -77,17 +74,17 @@
                         <!-- IP options will be populated here -->
                     </select>
                 </div>
-
                 <div class="input-group" style="margin-bottom: 10px;">
-                    <label for="deviceLocation" style="display: block; margin-bottom: 5px; color: #ffffff; font-weight: bold;">Ubicación del foco:</label>
-                    <select id="deviceLocation" name="deviceLocation" required style="width: 100%; padding: 5px; border: 1px solid #ddd; border-radius: 4px;">
+                    <label for="deviceLocation"
+                        style="display: block; margin-bottom: 5px; color: #ffffff; font-weight: bold;">Ubicación del
+                        foco:</label>
+                    <select id="deviceLocation" name="deviceLocation" required
+                        style="width: 100%; padding: 5px; border: 1px solid #ddd; border-radius: 4px;">
                         <option value="1">Foco Sala</option>
                         <option value="2">Foco Cocina</option>
                         <option value="3">Foco Dormitorio</option>
                     </select>
                 </div>
-                
-                
                 <div class="input-group">
                     <button type="submit">REGISTRAR</button>
                 </div>
@@ -102,8 +99,7 @@
             <div class="content__right__button">
                 <button id="btnScan">Scan</button>
             </div>
-            <p>El ESP32 escanea la red WiFi y lista los dispositivos conectados mostrándolos en la interfaz web.
-            </p>
+            <p>El ESP32 escanea la red WiFi y lista los dispositivos conectados mostrándolos en la interfaz web.</p>
         </div>
 
         <div class="content__right__table">
@@ -141,118 +137,203 @@
             <li>Guillermo Auza Banegas</li>
         </ul>
     </footer>
+</body>
 
 <script>
+    document.addEventListener('DOMContentLoaded', function () {
+        actualizarFechaHora();
+        var btnOn = document.getElementById('btnOn');
+        var btnOff = document.getElementById('btnOff');
+        var btnScan = document.getElementById('btnScan');
+        var tbody = document.getElementById('tbody');
+        var ledStatus = document.getElementById('ledStatus');
+        var trustedDevice = document.getElementById('trustedDevice');
 
-document.addEventListener('DOMContentLoaded', function() {
-    actualizarFechaHora();
-    var btnOn = document.getElementById('btnOn');
-    var btnOff = document.getElementById('btnOff');
-    var btnScan = document.getElementById('btnScan');
-    var tbody = document.getElementById('tbody');
-    var ledStatus = document.getElementById('ledStatus');
-    var trustedDevice = document.getElementById('trustedDevice');
-    
-    function turnOn() {
-        var xhttp = new XMLHttpRequest();
-        xhttp.onreadystatechange = function() {
-            if (this.readyState == 4 && this.status == 200) {
-                var data = JSON.parse(this.responseText);
-                updateLedStatus(data.led_on);
-            }
-        };
-        xhttp.open("GET", "/turnOn", true);
-        xhttp.send();
-    }
+        function turnOn() {
+            var xhttp = new XMLHttpRequest();
+            xhttp.onreadystatechange = function () {
+                if (this.readyState == 4 && this.status == 200) {
+                    var data = JSON.parse(this.responseText);
+                    updateLedStatus(data.led_on);
 
-            function turnOff() {
-                var xhttp = new XMLHttpRequest();
-                xhttp.onreadystatechange = function () {
-                    if (this.readyState == 4 && this.status == 200) {
-                        var data = JSON.parse(this.responseText);
-                        updateLedStatus(data.led_on);
-                    }
-                };
-                xhttp.open("GET", "/turnOff", true);
-                xhttp.send();
-            }
-
-            function scanNetwork() {
-                var xhttp = new XMLHttpRequest();
-                xhttp.onreadystatechange = function () {
-                    if (this.readyState == 4) {
-                        if (this.status == 200) {
-                            var response = JSON.parse(this.responseText);
-                            updateTableWithIPs(response.successful_ips);
-                        } else {
-                            console.error("Error al escanear la red: ", this.statusText);
+                    var xhttpPost = new XMLHttpRequest();
+                    xhttpPost.onreadystatechange = function () {
+                        if (this.readyState == 4) {
+                            if (this.status == 200) {
+                                console.log('Acción registrada con éxito');
+                            } else {
+                                console.error('Error al registrar la acción: ', this.responseText);
+                            }
                         }
-                    }
-                };
-                xhttp.open("GET", "/getDevicesStatus", true);
-                xhttp.send();
-            }
+                    };
 
-            function updateTableWithIPs(ips) {
-                var table = document.getElementById("table");
-                for (var i = table.rows.length - 1; i > 0; i--) {
-                    table.deleteRow(i);
+                    const currentDateTime = new Date().toISOString().slice(0, 19).replace('T', ' ');
+
+                    const postData = JSON.stringify({
+                        description: "Encendido de LED",
+                        datetime: currentDateTime,
+                        ledsLedId: 1,
+                        usersUserId: 1
+                    });
+
+                    xhttpPost.open("POST", "http://localhost:3000/api/v1/actions", true);
+                    xhttpPost.setRequestHeader("Content-Type", "application/json");
+                    xhttpPost.send(postData);
                 }
-
-                ips.forEach(function (ip) {
-                    var row = table.insertRow(-1);
-                    var cell1 = row.insertCell(0);
-                    cell1.innerHTML = ip;
-
-                    var cell2 = row.insertCell(1);
-                    cell2.innerHTML = "Conectado";
-
-        var cell3 = row.insertCell(2);
-        var button = document.createElement('button');
-        button.innerHTML = 'Acción';
-        button.onclick = function() {
-            // TODO: Definir post
-        };
-        cell3.appendChild(button);
-    });
-}
-
-
-            function setTrustedDevice(ip) {
-                var xhttp = new XMLHttpRequest();
-                xhttp.onreadystatechange = function () {
-                    if (this.readyState == 4 && this.status == 200) {
-                        trustedDevice.textContent = "IP: " + ip;
-                    }
-                };
-                xhttp.open("POST", "/setMyDevice", true);
-                xhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-                xhttp.send("ip=" + ip);
-            }
-
-            function updateLedStatus(isOn) {
-                ledStatus.textContent = "El foco está: " + (isOn ? "Encendido" : "Apagado");
-            }
-
-            btnOn.addEventListener('click', turnOn);
-            btnOff.addEventListener('click', turnOff);
-            btnScan.addEventListener('click', scanNetwork);
-        });
-
-        function obtenerFechaHora() {
-            const ahora = new Date();
-            const opciones = { year: 'numeric', month: 'long', day: 'numeric', hour: 'numeric', minute: 'numeric', second: 'numeric', hour12: false };
-            return ahora.toLocaleDateString('es-ES', opciones);
+            };
+            xhttp.open("GET", "/turnOn", true);
+            xhttp.send();
         }
 
-function actualizarFechaHora() {
-    const fechaHoraElemento = document.getElementById('fecha-hora');
-    if (fechaHoraElemento) {
-        fechaHoraElemento.textContent = "Fecha y Hora: " + obtenerFechaHora();
+        function turnOff() {
+            var xhttp = new XMLHttpRequest();
+            xhttp.onreadystatechange = function () {
+                if (this.readyState == 4 && this.status == 200) {
+                    var data = JSON.parse(this.responseText);
+                    updateLedStatus(data.led_on);
+                }
+            };
+            xhttp.open("GET", "/turnOff", true);
+            xhttp.send();
+        }
+
+        function scanNetwork() {
+            var xhttp = new XMLHttpRequest();
+            xhttp.onreadystatechange = function () {
+                if (this.readyState == 4) {
+                    if (this.status == 200) {
+                        var response = JSON.parse(this.responseText);
+                        updateTableWithIPs(response.successful_ips);
+                    } else {
+                        console.error("Error al escanear la red: ", this.statusText);
+                    }
+                }
+            };
+            xhttp.open("GET", "/getDevicesStatus", true);
+            xhttp.send();
+        }
+
+        function updateTableWithIPs(ips) {
+            var table = document.getElementById("table");
+
+            for (var i = table.rows.length - 1; i > 0; i--) {
+                table.deleteRow(i);
+            }
+
+            ips.forEach(function (ip) {
+                var row = table.insertRow(-1);
+                var cell1 = row.insertCell(0);
+                cell1.innerHTML = ip;
+
+                var cell2 = row.insertCell(1);
+                cell2.innerHTML = "Conectado";
+
+                var cell3 = row.insertCell(2);
+                var button = document.createElement('button');
+                button.innerHTML = 'Acción';
+                button.onclick = function () {
+                    // TODO: Definir post
+                };
+                cell3.appendChild(button);
+            });
+            updateIpSelect(ips);
+        }
+
+        function setTrustedDevice(ip) {
+            var xhttp = new XMLHttpRequest();
+            xhttp.onreadystatechange = function () {
+                if (this.readyState == 4 && this.status == 200) {
+                    trustedDevice.textContent = "IP: " + ip;
+                }
+            };
+            xhttp.open("POST", "/setMyDevice", true);
+            xhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+            xhttp.send("ip=" + ip);
+        }
+
+        function updateLedStatus(isOn) {
+            ledStatus.textContent = "El foco está: " + (isOn ? "Encendido" : "Apagado");
+        }
+
+        btnOn.addEventListener('click', turnOn);
+        btnOff.addEventListener('click', turnOff);
+        btnScan.addEventListener('click', scanNetwork);
+    });
+
+    function obtenerFechaHora() {
+        const ahora = new Date();
+        const opciones = { year: 'numeric', month: 'long', day: 'numeric', hour: 'numeric', minute: 'numeric', second: 'numeric', hour12: false };
+        return ahora.toLocaleDateString('es-ES', opciones);
     }
-}
 
+    function actualizarFechaHora() {
+        const fechaHoraElemento = document.getElementById('fecha-hora');
+        if (fechaHoraElemento) {
+            fechaHoraElemento.textContent = "Fecha y Hora: " + obtenerFechaHora();
+        }
+    }
 
+    function updateIpSelect(ips) {
+        var ipSelect = document.getElementById("ipSelect");
+
+        while (ipSelect.firstChild) {
+            ipSelect.removeChild(ipSelect.firstChild);
+        }
+
+        ips.forEach(function (ip) {
+            var option = document.createElement('option');
+            option.value = ip;
+            option.text = ip;
+            ipSelect.appendChild(option);
+        });
+    }
+
+    document.getElementById('registerForm').addEventListener('submit', function (event) {
+        event.preventDefault();
+
+        var deviceName = document.getElementById('deviceName').value;
+        var ipv4 = document.getElementById('ipSelect').value;
+        var led = document.getElementById('deviceLocation').value;
+
+        var userIdCookie = getCookie("userId");
+
+        var data = {
+            user_id: userIdCookie,
+            device_name: deviceName,
+            ipv4: ipv4,
+            scopes: ["ENCENDER_LED", "APAGAR_LED"],
+            led: led
+        };
+
+        var xhttp = new XMLHttpRequest();
+        xhttp.onreadystatechange = function () {
+            if (this.readyState == 4) {
+                console.log('Response:', this.responseText);
+                var message = "";
+                if (this.status == 200) {
+                    message = "Éxito registrando el dispositivo";
+                } else {
+                    message = "Error registrando el dispositivo";
+                }
+                console.log(message);
+                alert(message);
+            }
+        };
+        xhttp.open("POST", "http://localhost:3000/api/v1/devices", true);
+        xhttp.setRequestHeader("Content-Type", "application/json");
+        xhttp.send(JSON.stringify(data));
+    });
+
+    function getCookie(name) {
+        const cookieArray = document.cookie.split(';');
+        for (let i = 0; i < cookieArray.length; i++) {
+            const cookie = cookieArray[i].trim();
+            if (cookie.startsWith(name + '=')) {
+                return cookie.substring(name.length + 1);
+            }
+        }
+        return null;
+    }
 </script>
 
 </html>
