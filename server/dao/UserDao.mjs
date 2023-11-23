@@ -20,13 +20,13 @@ class UserDao {
         return rows;
     }
 
-    async promoteToAdmin(id) {
-        const [rows] = await this.connection.promise().query(`UPDATE USERS SET ADMIN = 1 WHERE USER_ID = ${id}`);
+    async promoteToAdmin(username) {
+        const [rows] = await this.connection.promise().query(`UPDATE USERS SET ADMIN = 1 WHERE USERNAME = '${username}'`);
         return rows;
     }
 
-    async demoteToUser(id) {
-        const [rows] = await this.connection.promise().query(`UPDATE USERS SET ADMIN = 0 WHERE USER_ID = ${id}`);
+    async demoteToUser(username) {
+        const [rows] = await this.connection.promise().query(`UPDATE USERS SET ADMIN = 0 WHERE USERNAME = '${username}'`);
         return rows;
     }
 
