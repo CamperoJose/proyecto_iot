@@ -5,6 +5,7 @@
 #include <ESPmDNS.h>
 #include <ESPAsyncWebServer.h>
 #include <SPIFFS.h>
+#include <HTTPClient.h>
 #include <vector>
 
 #define LED 18
@@ -25,6 +26,19 @@ AsyncWebServer server(80);
 void find_connected_devices() {
   bool ret;
   std::vector<String> current_successful_ips;
+  HTTPClient http;
+  http.begin("http://192.168.0.7:3000/api/v1/devices");  
+  int httpCode = http.GET();
+
+    String payload = http.getString();
+    Serial.println(payload);
+    
+    DynamicJsonDocument doc(2048);
+    deserializeJson(doc, payload);
+
+
+
+
   for (int i = 1; i <= max_devices; i++) {
     IPAddress ip(ip_surname[0], ip_surname[1], ip_surname[2], i);
     ret = Ping.ping(ip, 2);
@@ -34,15 +48,43 @@ void find_connected_devices() {
       Serial.print("Success: ");
       Serial.println(ipStr);
       current_successful_ips.push_back(ipStr);
+
+      for (JsonObject device : doc.as<JsonArray>()) {
+        String ipv4 = device["IPV4"].as<String>();
+        int pin = device["ESP_PIN"];
+        IPAddress ip;
+        ip.fromString(ipv4);
+        
+        if (ip.toString() == ipStr) {
+          digitalWrite(pin, HIGH);  // Enciende el LED
+          break;
+        }
+    }
+
     } else {
       Serial.print("Error: ");
       Serial.println(ipStr);
+
+      for (JsonObject device : doc.as<JsonArray>()) {
+        String ipv4 = device["IPV4"].as<String>();
+        int pin = device["ESP_PIN"];
+        IPAddress ip;
+        ip.fromString(ipv4);
+        
+        if (ip.toString() == ipStr) {
+          digitalWrite(pin, LOW);  // Enciende el LED
+          break;
+        }
+    }
     }
   }
 
   // Actualizar successful_ips con las IPs que tuvieron éxito
   successful_ips = current_successful_ips;
 }
+
+
+
 
 void handle_my_device_led() {
   bool my_device_found = std::find(successful_ips.begin(), successful_ips.end(), my_device) != successful_ips.end();
@@ -206,6 +248,5 @@ server.on("/setMyDevice", HTTP_POST, [](AsyncWebServerRequest *request){
 void loop(){
   printArrayBool(online_devices, max_devices);
   find_connected_devices();
-  switch_led_if_any_allowed_connected();
   handle_my_device_led();
 }
