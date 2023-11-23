@@ -42,10 +42,10 @@
                     <div class="content__left__title">
                         <h2>Control de Foco del DORMITORIO: </h2>
                     </div>
-                    <img src="../data/assets/2.svg" alt="">
+                    <img src="../data/assets/3.svg" alt="">
                     <div class="content__left__button">
-                        <button style="background-color: green" id="btnOn">ON</button>
-                        <button style="background-color: red" id="btnOff">OFF</button>
+                        <button style="background-color: green" id="btnOn2">ON</button>
+                        <button style="background-color: red" id="btnOff2">OFF</button>
                     </div>
                 </div>
 
@@ -53,10 +53,10 @@
                     <div class="content__left__title">
                         <h2>Control de Foco de la COCINA: </h2>
                     </div>
-                    <img  src="../data/assets/3.svg" alt="">
+                    <img  src="../data/assets/2.svg" alt="">
                     <div class="content__left__button">
-                        <button style="background-color: green" id="btnOn">ON</button>
-                        <button style="background-color: red" id="btnOff">OFF</button>
+                        <button style="background-color: green" id="btnOn3">ON</button>
+                        <button style="background-color: red" id="btnOff3">OFF</button>
                     </div>
                 </div>
 
@@ -151,46 +151,147 @@ document.addEventListener('DOMContentLoaded', function() {
     actualizarFechaHora();
     var btnOn = document.getElementById('btnOn');
     var btnOff = document.getElementById('btnOff');
+    var btnOn2 = document.getElementById('btnOn2');
+    var btnOff2 = document.getElementById('btnOff2');
+    var btnOn3 = document.getElementById('btnOn3');
+    var btnOff3 = document.getElementById('btnOff3');
     var btnScan = document.getElementById('btnScan');
     var tbody = document.getElementById('tbody');
     var ledStatus = document.getElementById('ledStatus');
     var trustedDevice = document.getElementById('trustedDevice');
     
-    function turnOn() {
-    // Primera solicitud: GET para encender el LED
-    var xhttp = new XMLHttpRequest();
-    xhttp.onreadystatechange = function() {
-        if (this.readyState == 4 && this.status == 200) {
-            var data = JSON.parse(this.responseText);
-            updateLedStatus(data.led_on);
+    function turnOn(ledId, event) {
+    if (event) {
+        event.preventDefault(); // Evitar el envío del formulario por defecto
+    }
 
+    // Función para realizar la solicitud GET
+    function sendGetRequest(url) {
+        return new Promise((resolve, reject) => {
+            var xhttp = new XMLHttpRequest();
+            xhttp.onreadystatechange = function() {
+                if (this.readyState == 4) {
+                    if (this.status == 200) {
+                        resolve(JSON.parse(this.responseText));
+                    } else {
+                        reject('Error en la solicitud GET: ' + this.responseText);
+                    }
+                }
+            };
+            xhttp.open("GET", url, true);
+            xhttp.send();
+        });
+    }
+
+    // Función para realizar la solicitud POST
+    function sendPostRequest(data) {
+        return new Promise((resolve, reject) => {
             var xhttpPost = new XMLHttpRequest();
             xhttpPost.onreadystatechange = function() {
                 if (this.readyState == 4) {
                     if (this.status == 200) {
                         console.log('Acción registrada con éxito');
+                        resolve();
                     } else {
                         console.error('Error al registrar la acción: ', this.responseText);
+                        reject('Error en la solicitud POST');
                     }
                 }
             };
 
-            const currentDateTime = new Date().toISOString().slice(0, 19).replace('T', ' ');
+            xhttpPost.open("POST", "http://localhost:3000/api/v1/actions", true);
+            xhttpPost.setRequestHeader("Content-Type", "application/json");
+            xhttpPost.send(JSON.stringify(data));
+        });
+    }
 
-            const postData = JSON.stringify({
-                description: "Encendido de LED",
+    // Determinar la URL basada en ledId
+    const url = ledId === 1 ? "/turnOn" : ledId === 2 ? "/turnOn2" : "/turnOn3";
+
+    sendGetRequest(url)
+        .then(data => {
+            updateLedStatus(data.led_on);
+
+            const currentDateTime = new Date().toISOString().slice(0, 19).replace('T', ' ');
+            const postData = {
+                description: "Encendido de LED manualmente desde la interfaz web",
                 datetime: currentDateTime, // Fecha y hora en formato compatible con MySQL
-                ledsLedId: 1, // Asumiendo un LED_ID constante
-                usersUserId: 1  // Asumiendo un USER_ID constante
-            });
+                ledsLedId: ledId, // Asumiendo un LED_ID constante
+                usersUserId: 1  // TODO: Asumiendo un USER_ID constante
+            };
+
+            return sendPostRequest(postData);
+        })
+        .catch(error => {
+            console.error(error);
+        });
+}
+
+function turnOff(ledId, event) {
+    if (event) {
+        event.preventDefault(); // Evitar el envío del formulario por defecto
+    }
+
+    // Función para realizar la solicitud GET
+    function sendGetRequest(url) {
+        return new Promise((resolve, reject) => {
+            var xhttp = new XMLHttpRequest();
+            xhttp.onreadystatechange = function() {
+                if (this.readyState == 4) {
+                    if (this.status == 200) {
+                        resolve(JSON.parse(this.responseText));
+                    } else {
+                        reject('Error en la solicitud GET: ' + this.responseText);
+                    }
+                }
+            };
+            xhttp.open("GET", url, true);
+            xhttp.send();
+        });
+    }
+
+    // Función para realizar la solicitud POST
+    function sendPostRequest(data) {
+        return new Promise((resolve, reject) => {
+            var xhttpPost = new XMLHttpRequest();
+            xhttpPost.onreadystatechange = function() {
+                if (this.readyState == 4) {
+                    if (this.status == 200) {
+                        console.log('Acción registrada con éxito');
+                        resolve();
+                    } else {
+                        console.error('Error al registrar la acción: ', this.responseText);
+                        reject('Error en la solicitud POST');
+                    }
+                }
+            };
 
             xhttpPost.open("POST", "http://localhost:3000/api/v1/actions", true);
             xhttpPost.setRequestHeader("Content-Type", "application/json");
-            xhttpPost.send(postData);
-        }
-    };
-    xhttp.open("GET", "/turnOn", true);
-    xhttp.send();
+            xhttpPost.send(JSON.stringify(data));
+        });
+    }
+
+    // Determinar la URL basada en ledId
+    const url = ledId === 1 ? "/turnOff" : ledId === 2 ? "/turnOff2" : "/turnOff3";
+
+    sendGetRequest(url)
+        .then(data => {
+            updateLedStatus(data.led_on);
+
+            const currentDateTime = new Date().toISOString().slice(0, 19).replace('T', ' ');
+            const postData = {
+                description: "Apagado de LED manualmente desde la interfaz web",
+                datetime: currentDateTime, // Fecha y hora en formato compatible con MySQL
+                ledsLedId: ledId, // Asumiendo un LED_ID constante
+                usersUserId: 1  // TODO: Asumiendo un USER_ID constante
+            };
+
+            return sendPostRequest(postData);
+        })
+        .catch(error => {
+            console.error(error);
+        });
 }
 
 
@@ -198,17 +299,9 @@ document.addEventListener('DOMContentLoaded', function() {
 
 
 
-    function turnOff() {
-        var xhttp = new XMLHttpRequest();
-        xhttp.onreadystatechange = function() {
-            if (this.readyState == 4 && this.status == 200) {
-                var data = JSON.parse(this.responseText);
-                updateLedStatus(data.led_on);
-            }
-        };
-        xhttp.open("GET", "/turnOff", true);
-        xhttp.send();
-    }
+
+
+
 
     function scanNetwork() {
     var xhttp = new XMLHttpRequest();
@@ -273,8 +366,13 @@ function updateTableWithIPs(ips) {
         ledStatus.textContent = "El foco está: " + (isOn ? "Encendido" : "Apagado");
     }
 
-    btnOn.addEventListener('click', turnOn);
-    btnOff.addEventListener('click', turnOff);
+    btnOn.addEventListener('click', (event) => turnOn(1, event));
+    btnOff.addEventListener('click', (event) => turnOff(1, event));
+    btnOn2.addEventListener('click', (event) => turnOn(2, event));
+    btnOff2.addEventListener('click', (event) => turnOff(2, event));
+    btnOn3.addEventListener('click', (event) => turnOn(3, event));
+    btnOff3.addEventListener('click', (event) => turnOff(3, event));
+
     btnScan.addEventListener('click', scanNetwork);
 });
 

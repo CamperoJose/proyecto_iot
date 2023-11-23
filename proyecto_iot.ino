@@ -7,7 +7,9 @@
 #include <SPIFFS.h>
 #include <vector>
 
-#define LED 2
+#define LED 18
+#define LED2 19
+#define LED3 21
 
 const int max_devices = 13;
 int allowed_ips[] = {2};
@@ -89,6 +91,8 @@ void setup()
 {
   Serial.begin(115200);
   pinMode(LED, OUTPUT);
+  pinMode(LED2, OUTPUT);
+  pinMode(LED3, OUTPUT);
   
   if(!SPIFFS.begin()){
     Serial.println("Error al montar SPIFFS");
@@ -159,6 +163,42 @@ server.on("/setMyDevice", HTTP_POST, [](AsyncWebServerRequest *request){
     digitalWrite(LED, LOW);
     led_on = false;
     request->send(200, "application/json", "{\"led_on\":false}"); });
+
+
+  server.on("/turnOn2", HTTP_GET, [](AsyncWebServerRequest *request)
+            {
+    digitalWrite(LED2, HIGH);
+    led_on = true;
+    request->send(200, "application/json", "{\"led_on\":true}"); });
+
+  server.on("/turnOff2", HTTP_GET, [](AsyncWebServerRequest *request)
+            {
+    digitalWrite(LED2, LOW);
+    led_on = false;
+    request->send(200, "application/json", "{\"led_on\":false}"); });
+
+
+
+      server.on("/turnOn3", HTTP_GET, [](AsyncWebServerRequest *request)
+            {
+    digitalWrite(LED3, HIGH);
+    led_on = true;
+    request->send(200, "application/json", "{\"led_on\":true}"); });
+
+  server.on("/turnOff3", HTTP_GET, [](AsyncWebServerRequest *request)
+            {
+    digitalWrite(LED3, LOW);
+    led_on = false;
+    request->send(200, "application/json", "{\"led_on\":false}"); });
+
+
+
+
+
+
+  server.on("/assets/1.svg", HTTP_GET, [](AsyncWebServerRequest *request){
+    request->send(SPIFFS, "/assets/1.svg", "image/svg");
+  });
 
   server.begin();
 }
