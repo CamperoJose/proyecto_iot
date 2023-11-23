@@ -74,6 +74,7 @@ void sendPostRequest(int ledId, int userId, const char* description) {
 
 
 
+<<<<<<< Updated upstream
 void find_connected_devices() {
   bool ret;
   std::vector<String> current_successful_ips;
@@ -81,11 +82,20 @@ void find_connected_devices() {
   http.begin("http://192.168.0.7:3000/api/v1/devices");  
   int httpCode = http.GET();
 
+=======
+void find_and_update_devices() {
+  HTTPClient http;
+  http.begin("http://192.168.0.7:3000/api/v1/devices");  // Reemplaza <IP_DEL_SERVIDOR> con la dirección IP real del servidor
+  int httpCode = http.GET();
+  
+  if (httpCode > 0) { // Verificar si se recibió la respuesta
+>>>>>>> Stashed changes
     String payload = http.getString();
     Serial.println(payload);
     
     DynamicJsonDocument doc(2048);
     deserializeJson(doc, payload);
+<<<<<<< Updated upstream
 
   for (int i = 1; i <= max_devices; i++) {
     IPAddress ip(ip_surname[0], ip_surname[1], ip_surname[2], i);
@@ -136,14 +146,34 @@ void find_connected_devices() {
     }
     }
   }
+=======
+>>>>>>> Stashed changes
 
-  // Actualizar successful_ips con las IPs que tuvieron éxito
-  successful_ips = current_successful_ips;
+    for (JsonObject device : doc.as<JsonArray>()) {
+      String ipv4 = device["IPV4"].as<String>();
+      int pin = device["ESP_PIN"];
+      IPAddress ip;
+      ip.fromString(ipv4);
+      
+      if (Ping.ping(ip, 2)) {
+        digitalWrite(pin, HIGH);  // Enciende el LED
+      } else {
+        digitalWrite(pin, LOW);   // Apaga el LED
+      }
+    }
+  } else {
+    Serial.print("Error en la solicitud HTTP, código: ");
+    Serial.println(httpCode);
+  }
+  http.end();
 }
 
 
+<<<<<<< Updated upstream
 
 
+=======
+>>>>>>> Stashed changes
 void handle_my_device_led() {
   bool my_device_found = std::find(successful_ips.begin(), successful_ips.end(), my_device) != successful_ips.end();
   
@@ -290,11 +320,15 @@ server.on("/setMyDevice", HTTP_POST, [](AsyncWebServerRequest *request){
     digitalWrite(LED3, LOW);
     led_on = false;
     request->send(200, "application/json", "{\"led_on\":false}"); });
+<<<<<<< Updated upstream
 
 
 
 
 
+=======
+    
+>>>>>>> Stashed changes
 
   server.on("/assets/1.svg", HTTP_GET, [](AsyncWebServerRequest *request){
     request->send(SPIFFS, "/assets/1.svg", "image/svg");
@@ -305,6 +339,11 @@ server.on("/setMyDevice", HTTP_POST, [](AsyncWebServerRequest *request){
 
 void loop(){
   printArrayBool(online_devices, max_devices);
+<<<<<<< Updated upstream
   find_connected_devices();
+=======
+  find_and_update_devices();
+  //switch_led_if_any_allowed_connected();
+>>>>>>> Stashed changes
   handle_my_device_led();
 }
