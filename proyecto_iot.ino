@@ -307,9 +307,28 @@ server.on("/setMyDevice", HTTP_POST, [](AsyncWebServerRequest *request){
 
 
 
-  server.on("/assets/1.svg", HTTP_GET, [](AsyncWebServerRequest *request){
-    request->send(SPIFFS, "/assets/1.svg", "image/svg");
+  server.on("/data/assets/1.png", HTTP_GET, [](AsyncWebServerRequest *request){
+    request->send(SPIFFS, "/assets/1.png", "image/png");
   });
+
+  
+  server.on("data/assets/2.png", HTTP_GET, [](AsyncWebServerRequest *request){
+    request->send(SPIFFS, "/assets/2.png", "image/png");
+  });
+
+  
+  server.on("/data/assets/3.png", HTTP_GET, [](AsyncWebServerRequest *request){
+    request->send(SPIFFS, "/data/assets/3.png", "image/png");
+  });
+
+    server.on("data/assets/ucb.png", HTTP_GET, [](AsyncWebServerRequest *request){
+    request->send(SPIFFS, "data/assets/ucb.png", "image/png");
+  });
+
+      server.on("/assets/escaneo-red.png", HTTP_GET, [](AsyncWebServerRequest *request){
+    request->send(SPIFFS, "/assets/escaneo-red.png", "image/png");
+  });
+
 
   server.begin();
 }
