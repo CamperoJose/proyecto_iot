@@ -1,0 +1,122 @@
+* {
+    margin: 0;
+    padding: 0;
+    font-family: Arial, sans-serif;
+    box-sizing: border-box;
+}
+
+body {
+    width: 100%;
+    height: 100vh;
+    background: #081b29;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.wrapper {
+    width: 90%;
+    max-width: 500px;
+    margin: auto;
+    padding: 2em;
+    border: 3px solid #00ffff;
+    box-shadow: 0 0 20px 0 #00a6bc;
+    border-radius: 20px;
+    background: #0c2636;
+}
+
+.form {
+    width: 100%;
+}
+
+.title {
+    font-size: 2rem;
+    margin-bottom: 1em;
+    text-align: center;
+    color: white;
+}
+
+.inp {
+    margin-bottom: 1em;
+    position: relative;
+}
+
+.input {
+    border: 2px solid #00ffff;
+    outline: none;
+    background: none;
+    width: 100%;
+    padding: 0.75em;
+    font-size: 1rem;
+    color: #0ef;
+    border-radius: 4px;
+}
+
+.input + i {
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #0ef;
+}
+
+.input:hover, .input:focus {
+    border-color: #c800ff;
+}
+
+.submit {
+    border: none;
+    outline: none;
+    width: 100%;
+    padding: 0.75em;
+    font-size: 1rem;
+    border-radius: 4px;
+    cursor: pointer;
+    background: linear-gradient(45deg, #0ef, #c800ff);
+    color: #fff;
+    margin: 0.5em 0;
+    text-transform: uppercase;
+}
+
+.submit a {
+    color: #fff;
+    text-decoration: none;
+}
+
+.submit:hover {
+    background: linear-gradient(-45deg, #0ef, #c800ff);
+}
+
+.checkbox-container {
+    display: flex;
+    align-items: center;
+    margin-top: 1em;
+}
+
+.checkbox-label {
+    margin-right: 0.5em;
+    color: #fff;
+}
+
+.checkbox-input {
+    width: 1.5em;
+    height: 1.5em;
+    cursor: pointer;
+}
+
+.checkbox-input:checked {
+    background-color: #00ffff;
+    border-color: #c800ff;
+}
+
+@media screen and (max-width: 600px) {
+    .wrapper {
+        width: 95%;
+        border: none;
+        box-shadow: none;
+    }
+
+    .title {
+        font-size: 1.5rem;
+    }
+}

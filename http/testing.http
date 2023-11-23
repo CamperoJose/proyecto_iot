@@ -16,10 +16,10 @@ Content-Type: application/json
 
 {
     "id_user_admin": 1,
-    "name": "juan perez",
+    "name": "juan perezzzzz",
     "username": "juan22",
     "password": "4321",
-    "administrator": 0
+    "administrator": 1
 }
 ###
 GET http://localhost:3000/api/v1/devices

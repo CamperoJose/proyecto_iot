@@ -18,13 +18,14 @@ bool online_devices[max_devices] = {false};
 bool led_on = false;
 String ip_local="";
 std::vector<String> successful_ips;
-String my_device = ""; // Variable que almacenará la IP de 'my_device'
+String my_device = ""; 
+String my_ip_host_back = "192.168.0.7"; 
 
 
 AsyncWebServer server(80);
 String getCurrentDateTimeFromServer() {
   HTTPClient http;
-  http.begin("http://192.168.0.7:3000/api/v1/currentDateTime");
+  http.begin("http://"+my_ip_host_back+":3000/api/v1/currentDateTime");
   int httpCode = http.GET();
 
   if (httpCode > 0) {
@@ -220,9 +221,17 @@ void setup()
     request->send(SPIFFS, "/index.html",String(), false);
   });
 
+    server.on("/register_user.html", HTTP_GET, [](AsyncWebServerRequest *request){
+    request->send(SPIFFS, "/register_user.html",String(), false);
+  });
+
   server.on("/style1.css", HTTP_GET, [](AsyncWebServerRequest *request){
             request->send(SPIFFS, "/style1.css", "text/css");
-            });     
+            });  
+
+                 server.on("/style2.css", HTTP_GET, [](AsyncWebServerRequest *request){
+            request->send(SPIFFS, "/style2.css", "text/css");
+            }); 
 
   
   server.on("/style.css", HTTP_GET, [](AsyncWebServerRequest *request){
@@ -307,7 +316,7 @@ server.on("/setMyDevice", HTTP_POST, [](AsyncWebServerRequest *request){
 
 
 
-  server.on("/data/assets/1.png", HTTP_GET, [](AsyncWebServerRequest *request){
+  server.on("/assets/1.png", HTTP_GET, [](AsyncWebServerRequest *request){
     request->send(SPIFFS, "/assets/1.png", "image/png");
   });
 
