@@ -23,8 +23,6 @@
                 <img src="https://m.media-amazon.com/images/I/611SuZX5oYL._AC_UF1000,1000_QL80_.jpg" alt="ESP32">
             </div>
 
-            
-            
             <div class="content">
 
                 <div class="content__left">
@@ -53,7 +51,7 @@
                     <div class="content__left__title">
                         <h2>Control de Foco de la COCINA: </h2>
                     </div>
-                    <img  src="../data/assets/3.svg" alt="">
+                    <img src="../data/assets/3.svg" alt="">
                     <div class="content__left__button">
                         <button style="background-color: green" id="btnOn">ON</button>
                         <button style="background-color: red" id="btnOff">OFF</button>
@@ -68,7 +66,7 @@
             <form id="registerForm">
                 <div class="input-group">
                     <label for="deviceName">Nombre del dispositivo:</label>
-                    <input type="text" id="deviceName" name="deviceName" required>
+                    <input type="text" id="deviceName" name="deviceName" placeholder="Ingrese el nombre del dispositivo" required>
                 </div>
                 <div class="input-group">
                     <label for="ipSelect">Seleccione una IP:</label>
@@ -76,7 +74,7 @@
                         <!-- IP options will be populated here -->
                     </select>
                 </div>
-                <div class="input-group">
+                <div class="input-group-button">
                     <button type="submit">REGISTRAR</button>
                 </div>
             </form>
@@ -93,7 +91,6 @@
             <p>El ESP32 escanea la red WiFi y lista los dispositivos conectados mostrándolos en la interfaz web.
             </p>
         </div>
-
 
         <div class="content__right__table">
             <h3>Dispositivo de confianza</h3>
@@ -115,7 +112,8 @@
         <div class="footer">
             <p>Sólo los dispositivos previamente identificados pueden acceder al servidor y controlar el foco.
                 <br>Utiliza el IDE de Arduino para programar el ESP32. <br>Deberás incluir las bibliotecas necesarias
-                para manejar WiFi, servidor web y el sistema de archivos SPIFFS.</p>
+                para manejar WiFi, servidor web y el sistema de archivos SPIFFS.
+            </p>
         </div>
     </div>
 
@@ -129,124 +127,115 @@
             <li>Guillermo Auza Banegas</li>
         </ul>
     </footer>
-</body>
 
-<script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            actualizarFechaHora();
+            var btnOn = document.getElementById('btnOn');
+            var btnOff = document.getElementById('btnOff');
+            var btnScan = document.getElementById('btnScan');
+            var tbody = document.getElementById('tbody');
+            var ledStatus = document.getElementById('ledStatus');
+            var trustedDevice = document.getElementById('trustedDevice');
 
-document.addEventListener('DOMContentLoaded', function() {
-    actualizarFechaHora();
-    var btnOn = document.getElementById('btnOn');
-    var btnOff = document.getElementById('btnOff');
-    var btnScan = document.getElementById('btnScan');
-    var tbody = document.getElementById('tbody');
-    var ledStatus = document.getElementById('ledStatus');
-    var trustedDevice = document.getElementById('trustedDevice');
-    
-    function turnOn() {
-        var xhttp = new XMLHttpRequest();
-        xhttp.onreadystatechange = function() {
-            if (this.readyState == 4 && this.status == 200) {
-                var data = JSON.parse(this.responseText);
-                updateLedStatus(data.led_on);
+            function turnOn() {
+                var xhttp = new XMLHttpRequest();
+                xhttp.onreadystatechange = function () {
+                    if (this.readyState == 4 && this.status == 200) {
+                        var data = JSON.parse(this.responseText);
+                        updateLedStatus(data.led_on);
+                    }
+                };
+                xhttp.open("GET", "/turnOn", true);
+                xhttp.send();
             }
-        };
-        xhttp.open("GET", "/turnOn", true);
-        xhttp.send();
-    }
 
-    function turnOff() {
-        var xhttp = new XMLHttpRequest();
-        xhttp.onreadystatechange = function() {
-            if (this.readyState == 4 && this.status == 200) {
-                var data = JSON.parse(this.responseText);
-                updateLedStatus(data.led_on);
+            function turnOff() {
+                var xhttp = new XMLHttpRequest();
+                xhttp.onreadystatechange = function () {
+                    if (this.readyState == 4 && this.status == 200) {
+                        var data = JSON.parse(this.responseText);
+                        updateLedStatus(data.led_on);
+                    }
+                };
+                xhttp.open("GET", "/turnOff", true);
+                xhttp.send();
             }
-        };
-        xhttp.open("GET", "/turnOff", true);
-        xhttp.send();
-    }
 
-    function scanNetwork() {
-    var xhttp = new XMLHttpRequest();
-    xhttp.onreadystatechange = function() {
-        if (this.readyState == 4) {
-            if (this.status == 200) {
-                var response = JSON.parse(this.responseText);
-                updateTableWithIPs(response.successful_ips); // Asumiendo que tienes una función que actualiza la tabla.
-            } else {
-                console.error("Error al escanear la red: ", this.statusText);
+            function scanNetwork() {
+                var xhttp = new XMLHttpRequest();
+                xhttp.onreadystatechange = function () {
+                    if (this.readyState == 4) {
+                        if (this.status == 200) {
+                            var response = JSON.parse(this.responseText);
+                            updateTableWithIPs(response.successful_ips);
+                        } else {
+                            console.error("Error al escanear la red: ", this.statusText);
+                        }
+                    }
+                };
+                xhttp.open("GET", "/getDevicesStatus", true);
+                xhttp.send();
+            }
+
+            function updateTableWithIPs(ips) {
+                var table = document.getElementById("table");
+                for (var i = table.rows.length - 1; i > 0; i--) {
+                    table.deleteRow(i);
+                }
+
+                ips.forEach(function (ip) {
+                    var row = table.insertRow(-1);
+                    var cell1 = row.insertCell(0);
+                    cell1.innerHTML = ip;
+
+                    var cell2 = row.insertCell(1);
+                    cell2.innerHTML = "Conectado";
+
+                    var cell3 = row.insertCell(2);
+                    var button = document.createElement('button');
+                    button.innerHTML = 'Acción';
+                    button.onclick = function () {
+                        // TODO: Definir acción para el botón
+                    };
+                    cell3.appendChild(button);
+                });
+            }
+
+            function setTrustedDevice(ip) {
+                var xhttp = new XMLHttpRequest();
+                xhttp.onreadystatechange = function () {
+                    if (this.readyState == 4 && this.status == 200) {
+                        trustedDevice.textContent = "IP: " + ip;
+                    }
+                };
+                xhttp.open("POST", "/setMyDevice", true);
+                xhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+                xhttp.send("ip=" + ip);
+            }
+
+            function updateLedStatus(isOn) {
+                ledStatus.textContent = "El foco está: " + (isOn ? "Encendido" : "Apagado");
+            }
+
+            btnOn.addEventListener('click', turnOn);
+            btnOff.addEventListener('click', turnOff);
+            btnScan.addEventListener('click', scanNetwork);
+        });
+
+        function obtenerFechaHora() {
+            const ahora = new Date();
+            const opciones = { year: 'numeric', month: 'long', day: 'numeric', hour: 'numeric', minute: 'numeric', second: 'numeric', hour12: false };
+            return ahora.toLocaleDateString('es-ES', opciones);
+        }
+
+        function actualizarFechaHora() {
+            const fechaHoraElemento = document.getElementById('fecha-hora');
+            if (fechaHoraElemento) {
+                fechaHoraElemento.textContent = "Fecha y Hora: " + obtenerFechaHora();
             }
         }
-    };
-    xhttp.open("GET", "/getDevicesStatus", true);
-    xhttp.send();
-}
-
-    
-function updateTableWithIPs(ips) {
-    var table = document.getElementById("table"); 
-
-
-    for(var i = table.rows.length - 1; i > 0; i--) {
-        table.deleteRow(i);
-    }
-
-    ips.forEach(function(ip) {
-        var row = table.insertRow(-1);  // Inserta una nueva fila al final de la tabla.
-        var cell1 = row.insertCell(0);  // Inserta una nueva celda en la fila.
-        cell1.innerHTML = ip;           // Establece el contenido de la celda con la dirección IP.
-
-
-        var cell2 = row.insertCell(1);
-        cell2.innerHTML = "Conectado"; // Ejemplo de estado.
-
-        var cell3 = row.insertCell(2);
-        var button = document.createElement('button');
-        button.innerHTML = 'Acción';
-        button.onclick = function() {
-            // TODO: Definir post
-        };
-        cell3.appendChild(button);
-    });
-}
-
-
-    function setTrustedDevice(ip) {
-        var xhttp = new XMLHttpRequest();
-        xhttp.onreadystatechange = function() {
-            if (this.readyState == 4 && this.status == 200) {
-                trustedDevice.textContent = "IP: " + ip;
-            }
-        };
-        xhttp.open("POST", "/setMyDevice", true);
-        xhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-        xhttp.send("ip=" + ip);
-    }
-
-    
-    function updateLedStatus(isOn) {
-        ledStatus.textContent = "El foco está: " + (isOn ? "Encendido" : "Apagado");
-    }
-
-    btnOn.addEventListener('click', turnOn);
-    btnOff.addEventListener('click', turnOff);
-    btnScan.addEventListener('click', scanNetwork);
-});
-
-function obtenerFechaHora() {
-    const ahora = new Date();
-    const opciones = { year: 'numeric', month: 'long', day: 'numeric', hour: 'numeric', minute: 'numeric', second: 'numeric', hour12: false };
-    return ahora.toLocaleDateString('es-ES', opciones);
-}
-
-function actualizarFechaHora() {
-    const fechaHoraElemento = document.getElementById('fecha-hora');
-    if (fechaHoraElemento) {
-        fechaHoraElemento.textContent = "Fecha y Hora: " + obtenerFechaHora();
-    }
-}
-
-
-</script>
+    </script>
+</body>
 
 </html>
