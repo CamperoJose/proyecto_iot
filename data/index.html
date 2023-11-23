@@ -11,8 +11,11 @@
 <body>
     <div class="container">
         <div class="navbar">
-            <img src="../data/assets/ucb.png" alt="logoucb"></img>
+            <img src="https://i.imgur.com/00zkjrG.png" alt="logoucb"></img>
             <p id="fecha-hora" class="hora">Fecha y Hora: </p>
+            <div class="content__right__button">
+                <button id="btnReg">Registrar nuevo usuario</button>
+            </div>
         </div>
         <div class="header-container">
             <div class="header">
@@ -31,10 +34,10 @@
                     <div class="content__left__title">
                         <h2>Control de Foco de la SALA: </h2>
                     </div>
-                    <img src="../data/assets/1.svg" alt="">
+                    <img src="https://i.imgur.com/Fos0i8Q.png" alt="">
                     <div class="content__left__button">
-                        <button style="background-color: green" id="btnOn">ON</button>
-                        <button style="background-color: red" id="btnOff">OFF</button>
+                        <button style="background-color: green" id="btnOn3">ON</button>
+                        <button style="background-color: red" id="btnOff3">OFF</button>
                     </div>
                 </div>
 
@@ -42,7 +45,7 @@
                     <div class="content__left__title">
                         <h2>Control de Foco del DORMITORIO: </h2>
                     </div>
-                    <img src="../data/assets/3.svg" alt="">
+                    <img src="https://i.imgur.com/qlAATC6.png" alt="">
                     <div class="content__left__button">
                         <button style="background-color: green" id="btnOn2">ON</button>
                         <button style="background-color: red" id="btnOff2">OFF</button>
@@ -53,10 +56,10 @@
                     <div class="content__left__title">
                         <h2>Control de Foco de la COCINA: </h2>
                     </div>
-                    <img  src="../data/assets/2.svg" alt="">
+                    <img  src="https://i.imgur.com/zmtiiVd.png" alt="">
                     <div class="content__left__button">
-                        <button style="background-color: green" id="btnOn3">ON</button>
-                        <button style="background-color: red" id="btnOff3">OFF</button>
+                        <button style="background-color: green" id="btnOn">ON</button>
+                        <button style="background-color: red" id="btnOff">OFF</button>
                     </div>
                 </div>
 
@@ -97,7 +100,7 @@
         </div>
 
         <div class="content__right">
-            <img src="../data/assets/escaneo-red.png" alt="">
+            <img src="https://i.imgur.com/lQ7WcY6.png" alt="">
             <div class="content__right__title">
                 <h2>Escaneo de Red</h2>
             </div>
@@ -110,15 +113,12 @@
 
 
         <div class="content__right__table">
-            <h3>Dispositivo de confianza</h3>
-            <p id="trustedDevice">IP: Ninguna</p>
             <h3>Dispositivos en la red</h3>
             <table id="table">
                 <thead>
                     <tr>
                         <th>IP</th>
                         <th>Estado</th>
-                        <th>Acciones</th>
                     </tr>
                 </thead>
                 <tbody id="tbody">
@@ -147,7 +147,27 @@
 
 <script>
 
+document.getElementById('btnReg').addEventListener('click', function() {
+    window.location.href = 'register_user.html';
+});
+
+function getCookie(name) {
+    var nameEQ = name + "=";
+    var ca = document.cookie.split(';');
+    for (var i = 0; i < ca.length; i++) {
+        var c = ca[i];
+        while (c.charAt(0) === ' ') c = c.substring(1, c.length);
+        if (c.indexOf(nameEQ) === 0) {
+            return c.substring(nameEQ.length, c.length);
+        }
+    }
+    return null;
+}
+
 document.addEventListener('DOMContentLoaded', function() {
+
+
+
     actualizarFechaHora();
     var btnOn = document.getElementById('btnOn');
     var btnOff = document.getElementById('btnOff');
@@ -164,6 +184,19 @@ document.addEventListener('DOMContentLoaded', function() {
     if (event) {
         event.preventDefault(); // Evitar el envío del formulario por defecto
     }
+
+    function getCookie(name) {
+    var nameEQ = name + "=";
+    var ca = document.cookie.split(';');
+    for (var i = 0; i < ca.length; i++) {
+        var c = ca[i];
+        while (c.charAt(0) === ' ') c = c.substring(1, c.length);
+        if (c.indexOf(nameEQ) === 0) {
+            return c.substring(nameEQ.length, c.length);
+        }
+    }
+    return null;
+}
 
     // Función para realizar la solicitud GET
     function sendGetRequest(url) {
@@ -213,11 +246,12 @@ document.addEventListener('DOMContentLoaded', function() {
             updateLedStatus(data.led_on);
 
             const currentDateTime = new Date().toISOString().slice(0, 19).replace('T', ' ');
+            var userId = getCookie('USER_ID');
             const postData = {
                 description: "Encendido de LED manualmente desde la interfaz web",
                 datetime: currentDateTime, // Fecha y hora en formato compatible con MySQL
                 ledsLedId: ledId, // Asumiendo un LED_ID constante
-                usersUserId: 1  // TODO: Asumiendo un USER_ID constante
+                usersUserId: userId  // TODO: Asumiendo un USER_ID constante
             };
 
             return sendPostRequest(postData);
@@ -280,11 +314,12 @@ function turnOff(ledId, event) {
             updateLedStatus(data.led_on);
 
             const currentDateTime = new Date().toISOString().slice(0, 19).replace('T', ' ');
+            var userId = getCookie('USER_ID');
             const postData = {
                 description: "Apagado de LED manualmente desde la interfaz web",
                 datetime: currentDateTime, // Fecha y hora en formato compatible con MySQL
                 ledsLedId: ledId, // Asumiendo un LED_ID constante
-                usersUserId: 1  // TODO: Asumiendo un USER_ID constante
+                usersUserId: userId  // TODO: Asumiendo un USER_ID constante
             };
 
             return sendPostRequest(postData);
@@ -292,16 +327,20 @@ function turnOff(ledId, event) {
         .catch(error => {
             console.error(error);
         });
-}
+    }
 
-
-
-
-
-
-
-
-
+    function getCookie(name) {
+        var nameEQ = name + "=";
+        var ca = document.cookie.split(';');
+        for (var i = 0; i < ca.length; i++) {
+            var c = ca[i];
+            while (c.charAt(0) === ' ') c = c.substring(1, c.length);
+            if (c.indexOf(nameEQ) === 0) {
+                return c.substring(nameEQ.length, c.length);
+            }
+        }
+        return null;
+    }
 
     function scanNetwork() {
     var xhttp = new XMLHttpRequest();
@@ -338,12 +377,7 @@ function updateTableWithIPs(ips) {
         cell2.innerHTML = "Conectado"; // Ejemplo de estado.
 
         var cell3 = row.insertCell(2);
-        var button = document.createElement('button');
-        button.innerHTML = 'Acción';
-        button.onclick = function() {
-            // TODO: Definir post
-        };
-        cell3.appendChild(button);
+
     });
     updateIpSelect(ips);
 }
@@ -414,10 +448,11 @@ document.getElementById('registerForm').addEventListener('submit', function(even
     var deviceName = document.getElementById('deviceName').value;
     var ipv4 = document.getElementById('ipSelect').value;
     var led = document.getElementById('deviceLocation').value;
+    var userId = getCookie('USER_ID');
 
     // Crear el objeto con los datos a enviar
     var data = {
-        user_id: 2,
+        user_id: userId,
         device_name: deviceName,
         ipv4: ipv4,
         scopes: ["ENCENDER_LED", "APAGAR_LED"],

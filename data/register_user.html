@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Control de Focos Web</title>
+    <link rel="stylesheet" href="style2.css">
+    <link rel="stylesheet" href="cl-icon/css/all.min.css">
+</head>
+
+<body>
+    <div class="wrapper">
+        <form id="registerForm" class="form">
+            <h1 class="title">Registrar Usuario</h1>
+            <div class="inp">
+                <input type="text" name="username" id="" class="input" placeholder="Username">
+                <i class="fa-solid fa-user"></i>
+            </div>
+            <div class="inp">
+                <input type="text" name="name" id="" class="input" placeholder="Nombre">
+                <i class="fa-solid fa-user"></i>
+            </div>
+            <div class="inp">
+                <input type="password" name="password" id="" class="input" placeholder="Contraseña">
+                <i class="fa-solid fa-lock"></i>
+            </div>
+            <div class="inp">
+                <div class="checkbox-container">
+                    <label for="adminCheckbox" class="checkbox-label">¿Será administrador?</label>
+                    <input type="checkbox" name="admin" id="adminCheckbox" class="checkbox-input">
+                </div>
+            </div>
+            <div class="buttons">
+                <button type="submit" class="submit">Registrar</button>
+                <button class="submit"><a href="login.html">Volver</a></button>
+            </div>
+        </form>
+    </div>
+</body>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const form = document.getElementById("registerForm");
+        form.addEventListener("submit", function (event) {
+            event.preventDefault();
+
+            const username = document.querySelector("input[name='username']").value;
+            const name = document.querySelector("input[name='name']").value;
+            const password = document.querySelector("input[name='password']").value;
+            const admin = document.querySelector("input[name='admin']").checked ? 1 : 0;
+            const id_user_admin = getCookie("USER_ID"); 
+
+            fetch("http://localhost:3000/api/v1/register", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({ id_user_admin, name, username, password, administrator: admin }),
+            })
+            .then((response) => {
+                if (response.ok) {
+                    return response.text();
+                } else {
+                    throw new Error('Error al crear el usuario. SOLAMENTE EL ADMINISTRADOR PUEDE CREAR USUARIOS' + response.text);
+                }
+            })
+            .then((message) => {
+                alert(message);
+            })
+            .catch((error) => {
+                alert(error.message);
+            });
+        });
+    });
+
+    function getCookie(name) {
+    var nameEQ = name + "=";
+    var ca = document.cookie.split(';');
+    for (var i = 0; i < ca.length; i++) {
+        var c = ca[i];
+        while (c.charAt(0) === ' ') c = c.substring(1, c.length);
+        if (c.indexOf(nameEQ) === 0) {
+            return c.substring(nameEQ.length, c.length);
+        }
+    }
+    return null;
+}
+</script>
+
+</html>
