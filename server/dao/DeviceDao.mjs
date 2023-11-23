@@ -6,7 +6,24 @@ class DeviceDao {
     }
 
     async listAllDevices() {
-        const [rows] = await this.connection.promise().query('SELECT * FROM DEVICES');
+        const [rows] = await this.connection.promise().query(`
+            SELECT 
+                D.IPV4, 
+                D.USERS_USER_ID, 
+                A.LEDS_LED_ID, 
+                S.SCOPE_NAME,
+                L.ESP_PIN
+            FROM 
+                DEVICES D
+            INNER JOIN 
+                AUTHORIZATION A ON D.DEVICE_ID = A.DEVICES_DEVICE_ID
+            INNER JOIN 
+                SCOPES S ON A.SCOPES_SCOPE_ID = S.SCOPE_ID
+            INNER JOIN 
+                LEDS L ON A.LEDS_LED_ID = L.LED_ID
+        `);
+
+
         return rows;
     }
 
