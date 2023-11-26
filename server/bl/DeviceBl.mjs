@@ -44,6 +44,14 @@ class DeviceBl {
         return new_device;
     }
 
+    async countDevices() {
+        return await this.deviceDao.countDevices();
+    }
+
+    async countLeds() {
+        return await this.deviceDao.countLeds();
+    }
+
 }
 
 export default DeviceBl;

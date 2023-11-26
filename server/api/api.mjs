@@ -88,6 +88,52 @@ router.post('/actions', async (req, res) => {
     }
 });
 
+// FILTRAR ACTIONS POR USUARIO
+router.get('/actions/user/:id', async (req, res) => {
+    const id = req.params.id;
+    const hActionBl = new HActionBl();
+    try {
+        const actions = await hActionBl.getActionsByUserId(id);
+        res.status(200).send(actions);
+    } catch (error) {
+        res.status(404).send(error.message);
+    }
+});
+
+// FILTRAR ACTIONS POR LED
+router.get('/actions/led/:id', async (req, res) => {
+    const id = req.params.id;
+    const hActionBl = new HActionBl();
+    try {
+        const actions = await hActionBl.getActionsByLedId(id);
+        res.status(200).send(actions);
+    } catch (error) {
+        res.status(404).send(error.message);
+    }
+});
+
+// CONTAR DISPOSITIVOS POR USUARIO
+router.get('/devices/count', async (req, res) => {
+    const deviceBl = new DeviceBl();
+    try {
+        const devices = await deviceBl.countDevices();
+        res.status(200).send(devices);
+    } catch (error) {
+        res.status(404).send(error.message);
+    }
+});
+
+// CONTAR LEDS TOTALES
+router.get('/leds/count', async (req, res) => {
+    const deviceBl = new DeviceBl();
+    try {
+        const devices = await deviceBl.countLeds();
+        res.status(200).send(devices);
+    } catch (error) {
+        res.status(404).send(error.message);
+    }
+});
+
 router.get('/currentDateTime', (req, res) => {
     const currentDateTime = new Date().toISOString().slice(0, 19).replace('T', ' ');
     res.status(200).send({ datetime: currentDateTime });

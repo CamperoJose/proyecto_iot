@@ -29,10 +29,34 @@ POST http://localhost:3000/api/v1/devices
 Content-Type: application/json
 
 {
-    "user_id": 2,
-    "device_name": "iphone de juan",
-    "ipv4": "192.168.10.10",
+    "user_id": 3,
+    "device_name": "iphone de bob",
+    "ipv4": "192.168.10.14",
     "scopes": ["ENCENDER_LED", "APAGAR_LED"],
-    "led": 1
+    "led": 3
 }
 ###
+GET http://localhost:3000/api/v1/actions
+
+###
+POST http://localhost:3000/api/v1/actions
+Content-Type: application/json
+
+{
+    "description": "Encender el foco de la sala",
+    "ledsLedId": 1,
+    "usersUserId": 2
+}
+
+###
+POST http://localhost:3000/api/v1/actions
+Content-Type: application/json
+
+{
+    "description": "Apagar el foco de la sala",
+    "ledsLedId": 1,
+    "usersUserId": 3
+}
+
+###
+GET http://localhost:3000/api/v1/currentDateTime

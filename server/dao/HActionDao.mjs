@@ -11,6 +11,21 @@ class HActionDao {
         return rows[0];
     }
 
+    async getActionsByUserId(id) {
+        const [rows] = await this.connection.promise().query(`SELECT * FROM H_ACTION WHERE USERS_USER_ID = ${id}`);
+        return rows;
+    }
+
+    async getActionsByLedId(id) {
+        const [rows] = await this.connection.promise().query(`SELECT * FROM H_ACTION WHERE LEDS_LED_ID = ${id}`);
+        return rows;
+    }
+
+    async createHActionWODate(description, ledsLedId, usersUserId) {
+        const [rows] = await this.connection.promise().query(`INSERT INTO H_ACTION (DESCRIPTION, DATETIME, LEDS_LED_ID, USERS_USER_ID) VALUES ('${description}', NOW(), ${ledsLedId}, ${usersUserId})`);
+        return rows;
+    }
+
     async createHAction(description, datetime, ledsLedId, usersUserId) {
         const [rows] = await this.connection.promise().query(`INSERT INTO H_ACTION (DESCRIPTION, DATETIME, LEDS_LED_ID, USERS_USER_ID) VALUES ('${description}', '${datetime}', ${ledsLedId}, ${usersUserId})`);
         return rows;
