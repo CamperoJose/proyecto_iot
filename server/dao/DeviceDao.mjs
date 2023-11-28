@@ -52,6 +52,11 @@ class DeviceDao {
         return rows; 
     }
 
+    async listAllLeds() {
+        const [rows] = await this.connection.promise().query(`SELECT * FROM LEDS`);
+        return rows;
+    }
+
 }
 
 export default DeviceDao;

@@ -48,6 +48,15 @@ class HActionBl {
         throw new Error('Error creating action');
     }
 
+    // esto va al dashboard
+    async countActionsByLedAndUser(ledId, userId, startDate, endDate) {
+        const actions = await this.hActionDao.countActionsByLedAndUser(ledId, userId, startDate, endDate);
+        if (actions.length > 0) {
+            return actions;
+        }
+        throw new Error('No actions found');
+    }
+
 }
 
 export default HActionBl;

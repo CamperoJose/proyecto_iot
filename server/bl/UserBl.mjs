@@ -43,6 +43,10 @@ class UserBl {
         }
         throw new Error('Invalid username or password');
     }
+
+    async listAllUsers() {
+        return await this.userDao.listAllUsers();
+    }
 }
 
 export default UserBl;

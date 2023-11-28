@@ -42,6 +42,17 @@ router.post('/login', async (req, res) => {
     }
 });
 
+// LISTAR TODOS LOS USUARIOS
+router.get('/users', async (req, res) => {
+    const userBl = new UserBl();
+    try {
+        const users = await userBl.listAllUsers();
+        res.status(200).send(users);
+    } catch (error) {
+        res.status(404).send(error.message);
+    }
+});
+
 // LISTAR DISPOSITIVOS
 router.get('/devices', async (req, res) => {
     const deviceBl = new DeviceBl();
@@ -62,6 +73,17 @@ router.post('/devices', async (req, res) => {
         res.status(200).send(new_device);
     } catch (error) {
         res.status(500).send(error.message);
+    }
+});
+
+// LISTAR TODOS LOS LEDS
+router.get('/leds', async (req, res) => {
+    const deviceBl = new DeviceBl();
+    try {
+        const leds = await deviceBl.listAllLeds();
+        res.status(200).send(leds);
+    } catch (error) {
+        res.status(404).send(error.message);
     }
 });
 
@@ -129,6 +151,21 @@ router.get('/leds/count', async (req, res) => {
     try {
         const devices = await deviceBl.countLeds();
         res.status(200).send(devices);
+    } catch (error) {
+        res.status(404).send(error.message);
+    }
+});
+
+// ESTE ES EL QUE REALMENTE SE USA PARA EL DASHBOARD
+// CONTAR ACCIONES POR LED, USUARIO, AGRUPADO POR DÍA LIMITADO POR FECHA-HORA
+router.get('/actions/count', async (req, res) => {
+    let { ledId, userId, startDate, endDate } = req.query;
+    console.log(startDate);
+    console.log(endDate);
+    const hActionBl = new HActionBl();
+    try {
+        const actions = await hActionBl.countActionsByLedAndUser(ledId, userId, startDate, endDate);
+        res.status(200).send(actions);
     } catch (error) {
         res.status(404).send(error.message);
     }

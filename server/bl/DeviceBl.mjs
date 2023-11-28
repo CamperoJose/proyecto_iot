@@ -48,6 +48,10 @@ class DeviceBl {
         return await this.deviceDao.countDevices();
     }
 
+    async listAllLeds() {
+        return await this.deviceDao.listAllLeds();
+    }
+
     async countLeds() {
         return await this.deviceDao.countLeds();
     }

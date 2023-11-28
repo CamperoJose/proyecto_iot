@@ -22,7 +22,7 @@ class HActionDao {
     }
 
     async createHActionWODate(description, ledsLedId, usersUserId) {
-        const [rows] = await this.connection.promise().query(`INSERT INTO H_ACTION (DESCRIPTION, DATETIME, LEDS_LED_ID, USERS_USER_ID) VALUES ('${description}', NOW(), ${ledsLedId}, ${usersUserId})`);
+        const [rows] = await this.connection.promise().query(`INSERT INTO H_ACTION (DESCRIPTION, DATETIME, LEDS_LED_ID, USERS_USER_ID) VALUES ('${description}', DATE_SUB(NOW(), INTERVAL 4 HOUR), ${ledsLedId}, ${usersUserId})`);
         return rows;
     }
 
@@ -43,6 +43,41 @@ class HActionDao {
 
     async getAllActions() {
         const [rows] = await this.connection.promise().query(`SELECT * FROM H_ACTION`);
+        return rows;
+    }
+
+    // esto va al dashboard
+    async countActionsByLedAndUser(ledId, userId, startDate, endDate) {
+        let q = "SELECT DATE_FORMAT(DATETIME, '%Y-%m-%d') AS DATE, HOUR(DATETIME) AS HOUR";
+        if (ledId !== undefined) {
+            q += ", LED_NAME";
+        }
+        if (userId !== undefined) {
+            q += ", USERNAME";
+        }
+        q += ", COUNT(ACTION_ID) AS COUNT FROM H_ACTION INNER JOIN LEDS ON LEDS_LED_ID = LED_ID INNER JOIN USERS ON USERS_USER_ID = USER_ID WHERE";
+        if (ledId !== undefined) {
+            q += ` LED_ID = ${ledId} AND`;
+        } 
+        if (userId !== undefined) {
+            q += ` USER_ID = ${userId} AND`;
+        }
+        if (startDate !== undefined && endDate !== undefined) {
+            q += ` DATETIME BETWEEN '${startDate}' AND '${endDate}'`;
+        } else {
+            q += " DATETIME BETWEEN DATE_SUB(NOW(), INTERVAL 1 DAY) AND NOW()";
+        }
+
+        q += " GROUP BY DATE, HOUR(DATETIME)";
+        if (ledId !== undefined) {
+            q += ", LED_NAME";
+        }
+        if (userId !== undefined) {
+            q += ", USERNAME";
+        }
+        q += " ORDER BY DATE, HOUR(DATETIME)";
+        console.log(q);
+        const [rows] = await this.connection.promise().query(q);
         return rows;
     }
 

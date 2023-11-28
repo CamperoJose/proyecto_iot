@@ -35,6 +35,11 @@ class UserDao {
         // TODO test this
         return rows[0];
     }
+
+    async listAllUsers() {
+        const [rows] = await this.connection.promise().query(`SELECT USER_ID, USERNAME, ADMIN FROM USERS`);
+        return rows;
+    }
 }
 
 export default UserDao;
