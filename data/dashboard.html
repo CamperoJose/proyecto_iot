@@ -34,6 +34,9 @@
   <div id="timelineChart">
     <!-- Display timeline chart here -->
   </div>
+
+  <button id="downloadButton">Download Data</button>
+
   <script src="https://code.highcharts.com/highcharts.js"></script>
   <script>
     async function fetchData(userId, ledId, start_date, end_date) {
@@ -161,6 +164,39 @@
       await fetchUsers();
       await fetchRooms();
       filterData(); // Fetch and display data initially
+    });
+
+    // Add this function to convert data to CSV format
+    function convertDataToCSV(data) {
+      const csvContent =
+        "data:text/csv;charset=utf-8," +
+        "Date, Hour,Count\n" +
+        data.map(d => `${d.DATE}, ${d.HOUR}`+":00:00"+`,${d.COUNT}`).join("\n");
+
+      return encodeURI(csvContent);
+    }
+
+    // Add an event listener to the download button
+    document.getElementById("downloadButton").addEventListener("click", () => {
+      const userSelect = document.getElementById("userSelect");
+      const roomSelect = document.getElementById("roomSelect");
+
+      const selectedUserId = userSelect.value;
+      const selectedRoomId = roomSelect.value;
+      const startDate = document.getElementById("startDate").value;
+      const endDate = document.getElementById("endDate").value;
+
+      fetchData(selectedUserId, selectedRoomId, startDate, endDate)
+        .then(data => {
+          const csvContent = convertDataToCSV(data);
+          const downloadLink = document.createElement("a");
+          downloadLink.href = csvContent;
+          downloadLink.download = "timeline_data.csv";
+          downloadLink.click();
+        })
+        .catch(error => {
+          console.log("Error fetching data:", error);
+        });
     });
   </script>
 </body>

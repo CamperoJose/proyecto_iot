@@ -52,8 +52,18 @@ class HActionBl {
     async countActionsByLedAndUser(ledId, userId, startDate, endDate) {
         const actions = await this.hActionDao.countActionsByLedAndUser(ledId, userId, startDate, endDate);
         if (actions.length > 0) {
+            for (let i = 0; i < actions.length; i++) {
+                //console.log("actions[i].HOUR: "+actions[i].HOUR);
+                if (actions[i].HOUR < 10) {
+                    //console.log("actions[i].HOUR: "+actions[i].HOUR);
+                    actions[i].HOUR = '0' + actions[i].HOUR;
+                } else {
+                    actions[i].HOUR = actions[i].HOUR + "";
+                }
+            }
             return actions;
         }
+        
         throw new Error('No actions found');
     }
 
