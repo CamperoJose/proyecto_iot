@@ -31,12 +31,21 @@ class UserBl {
         throw new Error('Only admins can create users');
     }
 
+    async promoteToAdmin(username) {
+        console.log('Promoting user to admin')
+        await this.userDao.promoteToAdmin(username);
+    }
+
     async validateUser(username, password) {
         const authn = await this.userDao.validateUser(username, password);
         if (authn) {
             return authn;
         }
         throw new Error('Invalid username or password');
+    }
+
+    async listAllUsers() {
+        return await this.userDao.listAllUsers();
     }
 }
 

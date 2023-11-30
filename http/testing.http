@@ -7,8 +7,8 @@ POST http://localhost:3000/api/v1/login
 Content-Type: application/json
 
 {
-    "username": "juan22",
-    "password": "4321"
+    "username": "superusedr",
+    "password": "123456"
 }
 ###
 POST http://localhost:3000/api/v1/register
@@ -16,8 +16,8 @@ Content-Type: application/json
 
 {
     "id_user_admin": 1,
-    "name": "juan perezzzzz",
-    "username": "juan22",
+    "name": "juana perez",
+    "username": "juana22",
     "password": "4321",
     "administrator": 1
 }
@@ -29,29 +29,50 @@ POST http://localhost:3000/api/v1/devices
 Content-Type: application/json
 
 {
-    "user_id": 2,
-    "device_name": "iphone de juan",
-    "ipv4": "192.168.10.11",
+    "user_id": 3,
+    "device_name": "iphone de bob",
+    "ipv4": "192.168.10.14",
     "scopes": ["ENCENDER_LED", "APAGAR_LED"],
-    "led": 1
+    "led": 3
 }
 ###
-
-###
-# Obtener todas las acciones
 GET http://localhost:3000/api/v1/actions
 
 ###
-# Crear una nueva acción
 POST http://localhost:3000/api/v1/actions
 Content-Type: application/json
 
 {
-    "description": "Encendido de LED",
-    "datetime": "2023-11-22T15:00:00",
-    "ledsLedId": 2,
-    "usersUserId": 1
+    "description": "Encender el foco de la sala",
+    "ledsLedId": 1,
+    "usersUserId": 2
 }
 
-### date
+###
+POST http://localhost:3000/api/v1/actions
+Content-Type: application/json
+
+{
+    "description": "Apagar el foco de la sala",
+    "ledsLedId": 1,
+    "usersUserId": 3
+}
+
+###
 GET http://localhost:3000/api/v1/currentDateTime
+
+###
+GET http://localhost:3000/api/v1/users
+###
+GET http://localhost:3000/api/v1/leds
+###
+GET http://localhost:3000/api/v1/devices/count
+
+###
+GET http://localhost:3000/api/v1/leds/count
+
+###
+#DASHBOARD
+GET http://localhost:3000/api/v1/actions/count?userId=3&ledId=1&startDate=2023-01-01&endDate=2023-12-31&
+###
+GET http://localhost:3000/api/v1/actions/count

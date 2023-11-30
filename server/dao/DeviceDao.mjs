@@ -42,6 +42,21 @@ class DeviceDao {
         return rows;
     }
 
+    async countDevices() {
+        const [rows] = await this.connection.promise().query(`SELECT USERNAME, COUNT(DEVICES.DEVICE_ID) AS DEVICE_COUNT FROM DEVICES JOIN USERS ON USER_ID = USERS_USER_ID GROUP BY USERNAME`);
+        return rows;
+    }
+
+    async countLeds() {
+        const [rows] = await this.connection.promise().query(`SELECT COUNT(LEDS.LED_ID) AS LED_COUNT FROM LEDS`);
+        return rows; 
+    }
+
+    async listAllLeds() {
+        const [rows] = await this.connection.promise().query(`SELECT * FROM LEDS`);
+        return rows;
+    }
+
 }
 
 export default DeviceDao;

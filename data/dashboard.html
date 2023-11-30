@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Activity Dashboard</title>
+  <style>
+    /* Add your styles here */
+  </style>
+</head>
+
+<body>
+  <h1>Activity Dashboard</h1>
+
+  <label for="userSelect">Select User:</label>
+  <select id="userSelect" onchange="filterData()">
+    <option value="">All</option>
+    <!-- Populate with user options dynamically -->
+  </select>
+
+  <label for="roomSelect">Select Room:</label>
+  <select id="roomSelect" onchange="filterData()">
+    <option value="">All</option>
+    <!-- Populate with room options dynamically -->
+  </select>
+
+  <label for="startDate">Start date</label>
+  <input type="date" id="startDate" onchange="filterData()">
+
+  <label for="endDate">End date</label>
+  <input type="date" id="endDate" onchange="filterData()">
+
+  <div id="timelineChart">
+    <!-- Display timeline chart here -->
+  </div>
+  <script src="https://code.highcharts.com/highcharts.js"></script>
+  <script>
+    async function fetchData(userId, ledId, start_date, end_date) {
+      try {
+        let url = 'http://localhost:3000/api/v1/actions/count'
+        if (userId || ledId || start_date || end_date) {
+          url += '?'
+        }
+        if (userId) {
+          url += `userId=${userId}&`
+        }
+        if (ledId) {
+          url += `ledId=${ledId}&`
+        }
+        if (start_date && end_date) {
+          url += `startDate=${start_date}&endDate=${end_date}`
+        }
+        console.log(url)
+        const response = await fetch(url);
+        const data = await response.json();
+        console.log(data);
+        return data;
+      } catch (error) {
+        alert('No data found');
+      }
+    }
+
+    async function fetchUsers() {
+      try {
+        const response = await fetch('http://localhost:3000/api/v1/users');
+        const users = await response.json();
+        console.log(users)
+
+        // Populate the user dropdown
+        const userSelect = document.getElementById('userSelect');
+        users.forEach(user => {
+          const option = document.createElement('option');
+          option.value = user.USER_ID;
+          option.text = user.USERNAME;
+          userSelect.appendChild(option);
+        });
+      } catch (error) {
+        console.error('Error fetching users:', error);
+      }
+    }
+
+    async function fetchRooms() {
+      try {
+        const response = await fetch('http://localhost:3000/api/v1/leds');
+        const rooms = await response.json();
+        console.log(rooms)
+
+        // Populate the room dropdown
+        const roomSelect = document.getElementById('roomSelect');
+        rooms.forEach(room => {
+          const option = document.createElement('option');
+          option.value = room.LED_ID;
+          option.text = room.LED_NAME;
+          roomSelect.appendChild(option);
+        });
+      } catch (error) {
+        console.error('Error fetching rooms:', error);
+      }
+    }
+
+    async function filterData() {
+      const userSelect = document.getElementById('userSelect');
+      const roomSelect = document.getElementById('roomSelect');
+
+      const selectedUserId = userSelect.value;
+      const selectedRoomId = roomSelect.value;
+      const startDate = document.getElementById('startDate').value;
+      const endDate = document.getElementById('endDate').value;
+
+      try {
+        const data = await fetchData(selectedUserId, selectedRoomId, startDate, endDate);
+
+        // Update the timeline chart with filtered data (you need to implement this part)
+        updateTimelineChart(data);
+      } catch (error) {
+        console.log('Error fetching data:', error)
+      }
+
+
+    }
+
+    function updateTimelineChart(data) {
+      // Prepare the data for the timeline chart
+      const chartData = data.map(action => ({
+        x: new Date(action.DATE + 'T' + action.HOUR + ':00:00'), // FIXME esto quizá se tire si action.HOUR no tiene un 0 por delante
+        count: action.COUNT
+      }));
+
+      console.log(chartData);
+
+
+      // Generate the line chart
+      Highcharts.chart('timelineChart', {
+        chart: {
+          type: 'line'
+        },
+        title: {
+          text: 'Timeline Chart'
+        },
+        xAxis: {
+          type: 'datetime',
+          title: {
+            text: 'Date'
+          }
+        },
+        yAxis: {
+          title: {
+            text: 'Count'
+          }
+        },
+        series: [{
+          name: 'Count',
+          data: chartData.map(d => [d.x.getTime(), d.count])
+        }]
+      });
+    }
+
+    // Fetch initial data and populate dropdowns
+    document.addEventListener('DOMContentLoaded', async () => {
+      await fetchUsers();
+      await fetchRooms();
+      filterData(); // Fetch and display data initially
+    });
+  </script>
+</body>
+
+</html>

@@ -42,6 +42,17 @@ router.post('/login', async (req, res) => {
     }
 });
 
+// LISTAR TODOS LOS USUARIOS
+router.get('/users', async (req, res) => {
+    const userBl = new UserBl();
+    try {
+        const users = await userBl.listAllUsers();
+        res.status(200).send(users);
+    } catch (error) {
+        res.status(404).send(error.message);
+    }
+});
+
 // LISTAR DISPOSITIVOS
 router.get('/devices', async (req, res) => {
     const deviceBl = new DeviceBl();
@@ -65,6 +76,17 @@ router.post('/devices', async (req, res) => {
     }
 });
 
+// LISTAR TODOS LOS LEDS
+router.get('/leds', async (req, res) => {
+    const deviceBl = new DeviceBl();
+    try {
+        const leds = await deviceBl.listAllLeds();
+        res.status(200).send(leds);
+    } catch (error) {
+        res.status(404).send(error.message);
+    }
+});
+
 // OBTENER TODOS LOS ACTION
 router.get('/actions', async (req, res) => {
     const hActionBl = new HActionBl();
@@ -85,6 +107,67 @@ router.post('/actions', async (req, res) => {
         res.status(200).send(result);
     } catch (error) {
         res.status(500).send(error.message);
+    }
+});
+
+// FILTRAR ACTIONS POR USUARIO
+router.get('/actions/user/:id', async (req, res) => {
+    const id = req.params.id;
+    const hActionBl = new HActionBl();
+    try {
+        const actions = await hActionBl.getActionsByUserId(id);
+        res.status(200).send(actions);
+    } catch (error) {
+        res.status(404).send(error.message);
+    }
+});
+
+// FILTRAR ACTIONS POR LED
+router.get('/actions/led/:id', async (req, res) => {
+    const id = req.params.id;
+    const hActionBl = new HActionBl();
+    try {
+        const actions = await hActionBl.getActionsByLedId(id);
+        res.status(200).send(actions);
+    } catch (error) {
+        res.status(404).send(error.message);
+    }
+});
+
+// CONTAR DISPOSITIVOS POR USUARIO
+router.get('/devices/count', async (req, res) => {
+    const deviceBl = new DeviceBl();
+    try {
+        const devices = await deviceBl.countDevices();
+        res.status(200).send(devices);
+    } catch (error) {
+        res.status(404).send(error.message);
+    }
+});
+
+// CONTAR LEDS TOTALES
+router.get('/leds/count', async (req, res) => {
+    const deviceBl = new DeviceBl();
+    try {
+        const devices = await deviceBl.countLeds();
+        res.status(200).send(devices);
+    } catch (error) {
+        res.status(404).send(error.message);
+    }
+});
+
+// ESTE ES EL QUE REALMENTE SE USA PARA EL DASHBOARD
+// CONTAR ACCIONES POR LED, USUARIO, AGRUPADO POR DÍA LIMITADO POR FECHA-HORA
+router.get('/actions/count', async (req, res) => {
+    let { ledId, userId, startDate, endDate } = req.query;
+    console.log(startDate);
+    console.log(endDate);
+    const hActionBl = new HActionBl();
+    try {
+        const actions = await hActionBl.countActionsByLedAndUser(ledId, userId, startDate, endDate);
+        res.status(200).send(actions);
+    } catch (error) {
+        res.status(404).send(error.message);
     }
 });
 
