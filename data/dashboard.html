@@ -148,6 +148,37 @@ select, input[type="date"] {
 
   <script src="https://code.highcharts.com/highcharts.js"></script>
   <script>
+
+  // Al cargar el DOM, verifica si el usuario ya ha iniciado sesión
+  document.addEventListener('DOMContentLoaded', async () => {
+    // Solicita las credenciales solo si el usuario no se ha autenticado previamente
+    if (!localStorage.getItem('authenticated')) {
+      let user = prompt("Ingrese el usuario:");
+      let password = prompt("Ingrese la contraseña:");
+
+      // Verifica que las credenciales sean correctas
+      if (user === "superuser" && password === "123456") {
+        // Establece la autenticación en el almacenamiento local
+        localStorage.setItem('authenticated', 'true');
+        await initializeDashboard();
+      } else {
+        // Si las credenciales son incorrectas, recarga la página o muestra un mensaje
+        alert('Usuario o contraseña incorrecta.');
+        window.location.reload(); // Esto recargará la página, solicitando nuevamente las credenciales
+      }
+    } else {
+      // Si el usuario ya se autenticó en el pasado, simplemente inicializa el dashboard
+      await initializeDashboard();
+    }
+  });
+
+  // Función para inicializar el dashboard
+  async function initializeDashboard() {
+    await fetchUsers();
+    await fetchRooms();
+    filterData(); // Fetch and display data initially
+  }
+
     async function fetchData(userId, ledId, start_date, end_date) {
       try {
         let url = 'http://localhost:3000/api/v1/actions/count'
@@ -174,42 +205,57 @@ select, input[type="date"] {
     }
 
     async function fetchUsers() {
-      try {
-        const response = await fetch('http://localhost:3000/api/v1/users');
-        const users = await response.json();
-        console.log(users)
+  try {
+    const response = await fetch('http://localhost:3000/api/v1/users');
+    const users = await response.json();
+    console.log(users);
 
-        // Populate the user dropdown
-        const userSelect = document.getElementById('userSelect');
-        users.forEach(user => {
-          const option = document.createElement('option');
-          option.value = user.USER_ID;
-          option.text = user.USERNAME;
-          userSelect.appendChild(option);
-        });
-      } catch (error) {
-        console.error('Error fetching users:', error);
-      }
-    }
+    // Vacía el combo box antes de añadir nuevos elementos
+    const userSelect = document.getElementById('userSelect');
+    userSelect.innerHTML = ''; // Esto elimina todos los hijos del elemento seleccionado
+    const defaultOption = document.createElement('option');
+    defaultOption.value = '';
+    defaultOption.text = 'All';
+    userSelect.appendChild(defaultOption);
 
-    async function fetchRooms() {
-      try {
-        const response = await fetch('http://localhost:3000/api/v1/leds');
-        const rooms = await response.json();
-        console.log(rooms)
+    // Añade los usuarios al combo box
+    users.forEach(user => {
+      const option = document.createElement('option');
+      option.value = user.USER_ID;
+      option.text = user.USERNAME;
+      userSelect.appendChild(option);
+    });
+  } catch (error) {
+    console.error('Error fetching users:', error);
+  }
+}
 
-        // Populate the room dropdown
-        const roomSelect = document.getElementById('roomSelect');
-        rooms.forEach(room => {
-          const option = document.createElement('option');
-          option.value = room.LED_ID;
-          option.text = room.LED_NAME;
-          roomSelect.appendChild(option);
-        });
-      } catch (error) {
-        console.error('Error fetching rooms:', error);
-      }
-    }
+async function fetchRooms() {
+  try {
+    const response = await fetch('http://localhost:3000/api/v1/leds');
+    const rooms = await response.json();
+    console.log(rooms);
+
+    // Vacía el combo box antes de añadir nuevos elementos
+    const roomSelect = document.getElementById('roomSelect');
+    roomSelect.innerHTML = ''; // Esto elimina todos los hijos del elemento seleccionado
+    const defaultOption = document.createElement('option');
+    defaultOption.value = '';
+    defaultOption.text = 'All';
+    roomSelect.appendChild(defaultOption);
+
+    // Añade las salas al combo box
+    rooms.forEach(room => {
+      const option = document.createElement('option');
+      option.value = room.LED_ID;
+      option.text = room.LED_NAME;
+      roomSelect.appendChild(option);
+    });
+  } catch (error) {
+    console.error('Error fetching rooms:', error);
+  }
+}
+
 
     async function filterData() {
       const userSelect = document.getElementById('userSelect');
