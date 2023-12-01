@@ -1,5 +1,5 @@
 import express from 'express';
-
+import axios from 'axios';
 import UserBl from '../bl/UserBl.mjs';
 import DeviceBl from '../bl/DeviceBl.mjs';
 import HActionBl from '../bl/HActionBl.mjs';
@@ -175,5 +175,162 @@ router.get('/currentDateTime', (req, res) => {
     const currentDateTime = new Date().toISOString().slice(0, 19).replace('T', ' ');
     res.status(200).send({ datetime: currentDateTime });
 });
+
+
+
+router.get('/prenderCocina', (req, res) => {
+    const data = {
+        description: "Encender por solicitud SIRI",
+        ledsLedId: 2,
+        usersUserId: 1
+    };
+
+    axios.post('http://localhost:3000/api/v1/actions', data, {
+        headers: {
+            'Content-Type': 'application/json'
+        }
+    })
+    .then(response => {
+        // Una vez que se complete el POST, realizar el GET
+        return axios.get('http://172.20.10.14/turnOn');
+    })
+    .then(responseGet => {
+        res.send("Luz de la cocina encendida y acción turnOn realizada");
+    })
+    .catch(error => {
+        console.error('Error en la solicitud:', error);
+        res.status(200).send("Se completo la operación");
+    });
+});
+
+router.get('/prenderSala', (req, res) => {
+    const data = {
+        description: "Encender por solicitud SIRI",
+        ledsLedId: 1,
+        usersUserId: 1
+    };
+
+    axios.post('http://localhost:3000/api/v1/actions', data, {
+        headers: {
+            'Content-Type': 'application/json'
+        }
+    })
+    .then(response => {
+        // Una vez que se complete el POST, realizar el GET
+        return axios.get('http://172.20.10.14/turnOn3');
+    })
+    .then(responseGet => {
+        res.send("Luz de la cocina encendida y acción turnOn realizada");
+    })
+    .catch(error => {
+        console.error('Error en la solicitud:', error);
+        res.status(200).send("Se completo la operación");
+    });
+});
+
+router.get('/prenderDormitorio', (req, res) => {
+    const data = {
+        description: "Encender por solicitud SIRI",
+        ledsLedId: 3,
+        usersUserId: 1
+    };
+
+    axios.post('http://localhost:3000/api/v1/actions', data, {
+        headers: {
+            'Content-Type': 'application/json'
+        }
+    })
+    .then(response => {
+        // Una vez que se complete el POST, realizar el GET
+        return axios.get('http://172.20.10.14/turnOn2');
+    })
+    .then(responseGet => {
+        res.send("Luz de la cocina encendida y acción turnOn realizada");
+    })
+    .catch(error => {
+        console.error('Error en la solicitud:', error);
+        res.status(200).send("Se completo la operación");
+    });
+});
+
+////////////////////////// APIS PARA SIRI //////////////////////////////////////
+
+
+
+router.get('/apagarCocina', (req, res) => {
+    const data = {
+        description: "Apagar por solicitud SIRI",
+        ledsLedId: 2,
+        usersUserId: 1
+    };
+
+    axios.post('http://localhost:3000/api/v1/actions', data, {
+        headers: {
+            'Content-Type': 'application/json'
+        }
+    })
+    .then(response => {
+        // Una vez que se complete el POST, realizar el GET
+        return axios.get('http://172.20.10.14/turnOff');
+    })
+    .then(responseGet => {
+        res.send("Luz de la cocina encendida y acción turnOn realizada");
+    })
+    .catch(error => {
+        console.error('Error en la solicitud:', error);
+        res.status(200).send("Se completo la operación");
+    });
+});
+
+router.get('/apagarSala', (req, res) => {
+    const data = {
+        description: "Apagar por solicitud SIRI",
+        ledsLedId: 1,
+        usersUserId: 1
+    };
+
+    axios.post('http://localhost:3000/api/v1/actions', data, {
+        headers: {
+            'Content-Type': 'application/json'
+        }
+    })
+    .then(response => {
+        // Una vez que se complete el POST, realizar el GET
+        return axios.get('http://172.20.10.14/turnOff3');
+    })
+    .then(responseGet => {
+        res.send("Luz de la cocina encendida y acción turnOn realizada");
+    })
+    .catch(error => {
+        console.error('Error en la solicitud:', error);
+        res.status(200).send("Se completo la operación");
+    });
+});
+
+router.get('/apagarDormitorio', (req, res) => {
+    const data = {
+        description: "Apagar por solicitud SIRI",
+        ledsLedId: 3,
+        usersUserId: 1
+    };
+
+    axios.post('http://localhost:3000/api/v1/actions', data, {
+        headers: {
+            'Content-Type': 'application/json'
+        }
+    })
+    .then(response => {
+        // Una vez que se complete el POST, realizar el GET
+        return axios.get('http://172.20.10.14/turnOff2');
+    })
+    .then(responseGet => {
+        res.send("Luz de la cocina encendida y acción turnOn realizada");
+    })
+    .catch(error => {
+        console.error('Error en la solicitud:', error);
+        res.status(200).send("Se completo la operación");
+    });
+});
+
 
 export default router;
