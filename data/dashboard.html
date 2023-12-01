@@ -6,36 +6,145 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Activity Dashboard</title>
   <style>
-    /* Add your styles here */
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap');
+
+body {
+    font-family: 'Roboto', sans-serif;
+    background-color: #ECEFF1;
+    margin: 0;
+    padding: 20px;
+}
+
+.dashboard-header h1 {
+    text-align: center;
+    color: #37474F;
+}
+
+.filters-container, .chart-container, .download-container {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    margin-bottom: 20px;
+}
+
+.card {
+    background-color: white;
+    padding: 15px;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    margin: 10px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.filter-card {
+    flex-basis: 22%;
+}
+
+.date-card {
+    width: 200px;
+}
+
+.icon {
+    color: #78909C;
+    font-size: 24px;
+    margin-bottom: 10px;
+}
+
+label {
+    font-size: 16px;
+    color: #546E7A;
+    margin-bottom: 5px;
+}
+
+select, input[type="date"] {
+    width: 100%;
+    padding: 10px;
+    border: 2px solid #CFD8DC;
+    border-radius: 4px;
+    font-size: 16px;
+}
+
+.download-card {
+    background-color: #42A5F5;
+    color: white;
+    padding: 10px 20px;
+    font-size: 16px;
+    cursor: pointer;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: auto;
+    transition: background-color 0.3s;
+}
+
+.download-card:hover {
+    background-color: #1E88E5;
+}
+
+#timelineChart {
+    flex-basis: 100%;
+    height: 400px; /* Ajusta la altura según sea necesario */
+}
+
+.download-container {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+}
+
   </style>
 </head>
 
-<body>
-  <h1>Activity Dashboard</h1>
+<div class="dashboard-header">
+  <h1>Dashboard de Actividad</h1>
+</div>
 
-  <label for="userSelect">Select User:</label>
-  <select id="userSelect" onchange="filterData()">
-    <option value="">All</option>
-    <!-- Populate with user options dynamically -->
-  </select>
-
-  <label for="roomSelect">Select Room:</label>
-  <select id="roomSelect" onchange="filterData()">
-    <option value="">All</option>
-    <!-- Populate with room options dynamically -->
-  </select>
-
-  <label for="startDate">Start date</label>
-  <input type="date" id="startDate" onchange="filterData()">
-
-  <label for="endDate">End date</label>
-  <input type="date" id="endDate" onchange="filterData()">
-
-  <div id="timelineChart">
-    <!-- Display timeline chart here -->
+<div class="filters-container">
+  <div class="card filter-card">
+      <i class="fas fa-users icon"></i>
+      <label for="userSelect">Select User:</label>
+      <select id="userSelect" onchange="filterData()">
+          <option value="">All</option>
+          <!-- Populate with user options dynamically -->
+      </select>
   </div>
 
-  <button id="downloadButton">Download Data</button>
+  <div class="card filter-card">
+      <i class="fas fa-building icon"></i>
+      <label for="roomSelect">Select Room:</label>
+      <select id="roomSelect" onchange="filterData()">
+          <option value="">All</option>
+          <!-- Populate with room options dynamically -->
+      </select>
+  </div>
+
+  <div class="card filter-card date-card">
+      <i class="fas fa-calendar-alt icon"></i>
+      <label for="startDate">Start date:</label>
+      <input type="date" id="startDate" onchange="filterData()">
+  </div>
+
+  <div class="card filter-card date-card">
+      <i class="fas fa-calendar-check icon"></i>
+      <label for="endDate">End date:</label>
+      <input type="date" id="endDate" onchange="filterData()">
+  </div>
+</div>
+
+<div class="chart-container">
+  <div id="timelineChart" class="card">
+      <!-- Display timeline chart here -->
+  </div>
+</div>
+
+<div class="download-container">
+  <button id="downloadButton" class="card download-card">
+      <i class="fas fa-download icon"></i>
+      Download Data
+  </button>
+</div>
 
   <script src="https://code.highcharts.com/highcharts.js"></script>
   <script>
@@ -202,3 +311,59 @@
 </body>
 
 </html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
