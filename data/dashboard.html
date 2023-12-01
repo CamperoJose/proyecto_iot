@@ -94,6 +94,36 @@ select, input[type="date"] {
     justify-content: center;
 }
 
+.top-cards-container {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 20px;
+    height: 500px;
+    width: 100%;
+}
+
+.card1 {
+  background-color: white;
+  padding: 15px;
+  border-radius: 8px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  margin: 10px;
+  display: flex;
+  flex-direction: column; /* Cambiamos a dirección vertical */
+  align-items: center;
+  justify-content: center; /* Centramos verticalmente */
+  flex-basis: 22%;
+  text-align: center; /* Centramos horizontalmente */
+}
+
+.card1 label {
+  font-weight: bold; /* Texto en negritas */
+  margin-bottom: 10px; /* Espacio entre el texto y el número */
+}
+
+#ledCount {
+  font-size: 40px; /* Tamaño de fuente grande */
+}
   </style>
 </head>
 
@@ -101,10 +131,23 @@ select, input[type="date"] {
   <h1>Dashboard de Actividad</h1>
 </div>
 
+<div class="top-cards-container">
+  <div class="card1">
+    <i class="fas fa-lightbulb icon"></i>
+    <label for="ledCount">Cantidad de LEDS:</label>
+    <div id="ledCount">Loading...</div>
+  </div>
+
+  <div id="deviceCountChart" class="card">
+    <!-- El gráfico de torta se mostrará aquí -->
+  </div>
+</div>
+
+
 <div class="filters-container">
   <div class="card filter-card">
       <i class="fas fa-users icon"></i>
-      <label for="userSelect">Select User:</label>
+      <label for="userSelect">Selecciona usuario:</label>
       <select id="userSelect" onchange="filterData()">
           <option value="">All</option>
           <!-- Populate with user options dynamically -->
@@ -113,7 +156,7 @@ select, input[type="date"] {
 
   <div class="card filter-card">
       <i class="fas fa-building icon"></i>
-      <label for="roomSelect">Select Room:</label>
+      <label for="roomSelect">Selecciona habitación:</label>
       <select id="roomSelect" onchange="filterData()">
           <option value="">All</option>
           <!-- Populate with room options dynamically -->
@@ -122,13 +165,13 @@ select, input[type="date"] {
 
   <div class="card filter-card date-card">
       <i class="fas fa-calendar-alt icon"></i>
-      <label for="startDate">Start date:</label>
+      <label for="startDate">Fecha Inicio:</label>
       <input type="date" id="startDate" onchange="filterData()">
   </div>
 
   <div class="card filter-card date-card">
       <i class="fas fa-calendar-check icon"></i>
-      <label for="endDate">End date:</label>
+      <label for="endDate">Fecha Final:</label>
       <input type="date" id="endDate" onchange="filterData()">
   </div>
 </div>
@@ -353,6 +396,54 @@ async function fetchRooms() {
           console.log("Error fetching data:", error);
         });
     });
+
+    async function fetchLedCount() {
+  try {
+    const response = await fetch('http://localhost:3000/api/v1/leds/count');
+    const data = await response.json();
+    const ledCount = data[0].LED_COUNT;
+    document.getElementById('ledCount').textContent = ledCount;
+  } catch (error) {
+    console.error('Error fetching LED count:', error);
+  }
+}
+
+// Llama a la función para obtener y mostrar la cantidad de LED
+fetchLedCount();
+
+async function fetchDeviceCountByUser() {
+  try {
+    const response = await fetch('http://localhost:3000/api/v1/devices/count');
+    const data = await response.json();
+    
+    // Preparar los datos para el gráfico de torta
+    const pieData = data.map(item => ({
+      name: item.USERNAME,
+      y: item.DEVICE_COUNT
+    }));
+    
+    // Generar el gráfico de torta
+    Highcharts.chart('deviceCountChart', {
+      chart: {
+        type: 'pie'
+      },
+      title: {
+        text: 'Cantidad de dispositivos por usuario'
+      },
+      series: [{
+        name: 'Devices',
+        data: pieData
+      }]
+    });
+  } catch (error) {
+    console.error('Error fetching device count by user:', error);
+  }
+}
+
+// Llama a la función para obtener y mostrar el gráfico de torta
+fetchDeviceCountByUser();
+
+
   </script>
 </body>
 
