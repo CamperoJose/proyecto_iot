@@ -6,41 +6,225 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Activity Dashboard</title>
   <style>
-    /* Add your styles here */
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap');
+
+body {
+    font-family: 'Roboto', sans-serif;
+    background-color: #ECEFF1;
+    margin: 0;
+    padding: 20px;
+}
+
+.dashboard-header h1 {
+    text-align: center;
+    color: #37474F;
+}
+
+.filters-container, .chart-container, .download-container {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    margin-bottom: 20px;
+}
+
+.card {
+    background-color: white;
+    padding: 15px;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    margin: 10px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.filter-card {
+    flex-basis: 22%;
+}
+
+.date-card {
+    width: 200px;
+}
+
+.icon {
+    color: #78909C;
+    font-size: 24px;
+    margin-bottom: 10px;
+}
+
+label {
+    font-size: 16px;
+    color: #546E7A;
+    margin-bottom: 5px;
+}
+
+select, input[type="date"] {
+    width: 100%;
+    padding: 10px;
+    border: 2px solid #CFD8DC;
+    border-radius: 4px;
+    font-size: 16px;
+}
+
+.download-card {
+    background-color: #42A5F5;
+    color: white;
+    padding: 10px 20px;
+    font-size: 16px;
+    cursor: pointer;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: auto;
+    transition: background-color 0.3s;
+}
+
+.download-card:hover {
+    background-color: #1E88E5;
+}
+
+#timelineChart {
+    flex-basis: 100%;
+    height: 400px; /* Ajusta la altura según sea necesario */
+}
+
+.download-container {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+}
+
+.top-cards-container {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 20px;
+    height: 500px;
+    width: 100%;
+}
+
+.card1 {
+  background-color: white;
+  padding: 15px;
+  border-radius: 8px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  margin: 10px;
+  display: flex;
+  flex-direction: column; /* Cambiamos a dirección vertical */
+  align-items: center;
+  justify-content: center; /* Centramos verticalmente */
+  flex-basis: 22%;
+  text-align: center; /* Centramos horizontalmente */
+}
+
+.card1 label {
+  font-weight: bold; /* Texto en negritas */
+  margin-bottom: 10px; /* Espacio entre el texto y el número */
+}
+
+#ledCount {
+  font-size: 40px; /* Tamaño de fuente grande */
+}
   </style>
 </head>
 
-<body>
-  <h1>Activity Dashboard</h1>
+<div class="dashboard-header">
+  <h1>Dashboard de Actividad</h1>
+</div>
 
-  <label for="userSelect">Select User:</label>
-  <select id="userSelect" onchange="filterData()">
-    <option value="">All</option>
-    <!-- Populate with user options dynamically -->
-  </select>
-
-  <label for="roomSelect">Select Room:</label>
-  <select id="roomSelect" onchange="filterData()">
-    <option value="">All</option>
-    <!-- Populate with room options dynamically -->
-  </select>
-
-  <label for="startDate">Start date</label>
-  <input type="date" id="startDate" onchange="filterData()">
-
-  <label for="endDate">End date</label>
-  <input type="date" id="endDate" onchange="filterData()">
-
-  <div id="timelineChart">
-    <!-- Display timeline chart here -->
+<div class="top-cards-container">
+  <div class="card1">
+    <i class="fas fa-lightbulb icon"></i>
+    <label for="ledCount">Cantidad de LEDS:</label>
+    <div id="ledCount">Loading...</div>
   </div>
 
   <button id="downloadButton">Download Data</button>
   <button id="downloadReport">Download Report</button>
   <button id="downloadScopes">Download Scopes</button>
+  <div id="deviceCountChart" class="card">
+    <!-- El gráfico de torta se mostrará aquí -->
+  </div>
+</div>
+
+
+<div class="filters-container">
+  <div class="card filter-card">
+      <i class="fas fa-users icon"></i>
+      <label for="userSelect">Selecciona usuario:</label>
+      <select id="userSelect" onchange="filterData()">
+          <option value="">All</option>
+          <!-- Populate with user options dynamically -->
+      </select>
+  </div>
+
+  <div class="card filter-card">
+      <i class="fas fa-building icon"></i>
+      <label for="roomSelect">Selecciona habitación:</label>
+      <select id="roomSelect" onchange="filterData()">
+          <option value="">All</option>
+          <!-- Populate with room options dynamically -->
+      </select>
+  </div>
+
+  <div class="card filter-card date-card">
+      <i class="fas fa-calendar-alt icon"></i>
+      <label for="startDate">Fecha Inicio:</label>
+      <input type="date" id="startDate" onchange="filterData()">
+  </div>
+
+  <div class="card filter-card date-card">
+      <i class="fas fa-calendar-check icon"></i>
+      <label for="endDate">Fecha Final:</label>
+      <input type="date" id="endDate" onchange="filterData()">
+  </div>
+</div>
+
+<div class="chart-container">
+  <div id="timelineChart" class="card">
+      <!-- Display timeline chart here -->
+  </div>
+</div>
+
+<div class="download-container">
+  <button id="downloadButton" class="card download-card">
+      <i class="fas fa-download icon"></i>
+      Download Data
+  </button>
+</div>
 
   <script src="https://code.highcharts.com/highcharts.js"></script>
   <script>
+
+  // Al cargar el DOM, verifica si el usuario ya ha iniciado sesión
+  document.addEventListener('DOMContentLoaded', async () => {
+    // Solicita las credenciales solo si el usuario no se ha autenticado previamente
+    if (!localStorage.getItem('authenticated')) {
+      let user = prompt("Ingrese el usuario:");
+      let password = prompt("Ingrese la contraseña:");
+
+      // Verifica que las credenciales sean correctas
+      if (user === "superuser" && password === "123456") {
+        // Establece la autenticación en el almacenamiento local
+        localStorage.setItem('authenticated', 'true');
+        await initializeDashboard();
+      } else {
+        // Si las credenciales son incorrectas, recarga la página o muestra un mensaje
+        alert('Usuario o contraseña incorrecta.');
+        window.location.reload(); // Esto recargará la página, solicitando nuevamente las credenciales
+      }
+    } else {
+      // Si el usuario ya se autenticó en el pasado, simplemente inicializa el dashboard
+      await initializeDashboard();
+    }
+  });
+
+  // Función para inicializar el dashboard
+  async function initializeDashboard() {
+    await fetchUsers();
+    await fetchRooms();
+    filterData(); // Fetch and display data initially
+  }
+
     async function fetchData(userId, ledId, start_date, end_date) {
       try {
         let url = 'http://localhost:3000/api/v1/actions/count'
@@ -67,42 +251,57 @@
     }
 
     async function fetchUsers() {
-      try {
-        const response = await fetch('http://localhost:3000/api/v1/users');
-        const users = await response.json();
-        console.log(users)
+  try {
+    const response = await fetch('http://localhost:3000/api/v1/users');
+    const users = await response.json();
+    console.log(users);
 
-        // Populate the user dropdown
-        const userSelect = document.getElementById('userSelect');
-        users.forEach(user => {
-          const option = document.createElement('option');
-          option.value = user.USER_ID;
-          option.text = user.USERNAME;
-          userSelect.appendChild(option);
-        });
-      } catch (error) {
-        console.error('Error fetching users:', error);
-      }
-    }
+    // Vacía el combo box antes de añadir nuevos elementos
+    const userSelect = document.getElementById('userSelect');
+    userSelect.innerHTML = ''; // Esto elimina todos los hijos del elemento seleccionado
+    const defaultOption = document.createElement('option');
+    defaultOption.value = '';
+    defaultOption.text = 'All';
+    userSelect.appendChild(defaultOption);
 
-    async function fetchRooms() {
-      try {
-        const response = await fetch('http://localhost:3000/api/v1/leds');
-        const rooms = await response.json();
-        console.log(rooms)
+    // Añade los usuarios al combo box
+    users.forEach(user => {
+      const option = document.createElement('option');
+      option.value = user.USER_ID;
+      option.text = user.USERNAME;
+      userSelect.appendChild(option);
+    });
+  } catch (error) {
+    console.error('Error fetching users:', error);
+  }
+}
 
-        // Populate the room dropdown
-        const roomSelect = document.getElementById('roomSelect');
-        rooms.forEach(room => {
-          const option = document.createElement('option');
-          option.value = room.LED_ID;
-          option.text = room.LED_NAME;
-          roomSelect.appendChild(option);
-        });
-      } catch (error) {
-        console.error('Error fetching rooms:', error);
-      }
-    }
+async function fetchRooms() {
+  try {
+    const response = await fetch('http://localhost:3000/api/v1/leds');
+    const rooms = await response.json();
+    console.log(rooms);
+
+    // Vacía el combo box antes de añadir nuevos elementos
+    const roomSelect = document.getElementById('roomSelect');
+    roomSelect.innerHTML = ''; // Esto elimina todos los hijos del elemento seleccionado
+    const defaultOption = document.createElement('option');
+    defaultOption.value = '';
+    defaultOption.text = 'All';
+    roomSelect.appendChild(defaultOption);
+
+    // Añade las salas al combo box
+    rooms.forEach(room => {
+      const option = document.createElement('option');
+      option.value = room.LED_ID;
+      option.text = room.LED_NAME;
+      roomSelect.appendChild(option);
+    });
+  } catch (error) {
+    console.error('Error fetching rooms:', error);
+  }
+}
+
 
     async function filterData() {
       const userSelect = document.getElementById('userSelect');
@@ -278,9 +477,110 @@
           console.log("Error fetching data:", error);
         });
     });
+    async function fetchLedCount() {
+  try {
+    const response = await fetch('http://localhost:3000/api/v1/leds/count');
+    const data = await response.json();
+    const ledCount = data[0].LED_COUNT;
+    document.getElementById('ledCount').textContent = ledCount;
+  } catch (error) {
+    console.error('Error fetching LED count:', error);
+  }
+}
+
+// Llama a la función para obtener y mostrar la cantidad de LED
+fetchLedCount();
+
+async function fetchDeviceCountByUser() {
+  try {
+    const response = await fetch('http://localhost:3000/api/v1/devices/count');
+    const data = await response.json();
+    
+    // Preparar los datos para el gráfico de torta
+    const pieData = data.map(item => ({
+      name: item.USERNAME,
+      y: item.DEVICE_COUNT
+    }));
+    
+    // Generar el gráfico de torta
+    Highcharts.chart('deviceCountChart', {
+      chart: {
+        type: 'pie'
+      },
+      title: {
+        text: 'Cantidad de dispositivos por usuario'
+      },
+      series: [{
+        name: 'Devices',
+        data: pieData
+      }]
+    });
+  } catch (error) {
+    console.error('Error fetching device count by user:', error);
+  }
+}
+
+// Llama a la función para obtener y mostrar el gráfico de torta
+fetchDeviceCountByUser();
 
 
   </script>
 </body>
 
 </html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
