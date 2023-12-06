@@ -67,6 +67,27 @@ class HActionBl {
         throw new Error('No actions found');
     }
 
+    async summaryActions() {
+        const actions = await this.hActionDao.summaryActionsByLedAndUser();
+        let result = [];
+        if (actions.length > 0) {
+            for (let i = 0; i < actions.length; i++) {
+                //console.log("actions[i].HOUR: "+actions[i].HOUR);
+                result.push({
+                    n: actions[i].NRO,
+                    fecha: actions[i].DATE,
+                    hora: actions[i].TIME,
+                    habitacion: actions[i].LED_NAME,
+                    persona: actions[i].NAME,
+                    admin: actions[i].ADMIN[0],
+                    accion: actions[i].DESCRIPTION
+                });
+            }
+            return result;
+        }
+        throw new Error('No actions found');
+    }
+
 }
 
 export default HActionBl;

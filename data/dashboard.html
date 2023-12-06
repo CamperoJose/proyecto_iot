@@ -36,6 +36,8 @@
   </div>
 
   <button id="downloadButton">Download Data</button>
+  <button id="downloadReport">Download Report</button>
+  <button id="downloadScopes">Download Scopes</button>
 
   <script src="https://code.highcharts.com/highcharts.js"></script>
   <script>
@@ -159,6 +161,7 @@
       });
     }
 
+    // DOWNLOAD LINE CHART AS CSV
     // Fetch initial data and populate dropdowns
     document.addEventListener('DOMContentLoaded', async () => {
       await fetchUsers();
@@ -198,6 +201,85 @@
           console.log("Error fetching data:", error);
         });
     });
+
+    // DOWNLOAD ALL ACTIONS AS CSV
+    // fetch all actions
+    async function fetchAllActions() {
+      try {
+        const response = await fetch('http://localhost:3000/api/v1/actions/summary');
+        const data = await response.json();
+        console.log(data);
+        return data;
+      } catch (error) {
+        alert('No data found');
+      }
+    }
+
+    // Add this function to convert data to CSV format
+    function convertDataToCSVreport(data) {
+      console.log(data[0]);
+      const csvContent =
+        "data:text/csv;charset=utf-8," +
+        "Nro, Fecha, Hora, Habitacion, Persona, Admin, Accion\n" +
+        data.map(d => `${d.n}, ${d.fecha}, ${d.hora}, ${d.habitacion}, ${d.persona}, ${d.admin}, ${d.accion}`).join("\n");
+
+      return encodeURI(csvContent);
+    }
+
+    // Add an event listener to the download report button
+    document.getElementById("downloadReport").addEventListener("click", () => {
+      fetchAllActions()
+        .then(data => {
+          const csvContent = convertDataToCSVreport(data);
+          const downloadLink = document.createElement("a");
+          downloadLink.href = csvContent;
+          downloadLink.download = "report_data.csv";
+          downloadLink.click();
+        })
+        .catch(error => {
+          console.log("Error fetching data:", error);
+        });
+    });
+
+    // DOWNLOAD SCOPES AS CSV
+    // fetch all scopes
+    async function fetchAllScopes() {
+      try {
+        const response = await fetch('http://localhost:3000/api/v1/devices/summary');
+        const data = await response.json();
+        console.log(data);
+        return data;
+      } catch (error) {
+        alert('No data found');
+      }
+    }
+
+    // Add this function to convert data to CSV format
+    function convertDataToCSVscopes(data) {
+      const csvContent =
+        "data:text/csv;charset=utf-8," +
+        "NombreDispositivo, IPv4, Propietario, Privilegios, Scope\n" +
+        data.map(d => `${d.DeviceName}, ${d.DeviceIPv4}, ${d.OwnerName}, ${d.GrantedScopes}`).join("\n");
+
+      return encodeURI(csvContent);
+    }
+
+    // Add an event listener to the download scopes button
+    document.getElementById("downloadScopes").addEventListener("click", () => {
+      fetchAllScopes()
+        .then(data => {
+          const csvContent = convertDataToCSVscopes(data);
+          const downloadLink = document.createElement("a");
+          downloadLink.href = csvContent;
+          downloadLink.download = "scopes_data.csv";
+          downloadLink.click();
+        })
+        .catch(error => {
+          console.log("Error fetching data:", error);
+        });
+    });
+
+
   </script>
 </body>
 

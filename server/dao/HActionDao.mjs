@@ -81,6 +81,13 @@ class HActionDao {
         return rows;
     }
 
+    async summaryActionsByLedAndUser(){
+        let q = "SELECT ROW_NUMBER() OVER (ORDER BY DATETIME) AS NRO, DATE_FORMAT(DATETIME, '%Y-%m-%d') AS DATE, TIME_FORMAT(DATETIME, '%H:%i:%s') AS TIME, LED_NAME, NAME, ADMIN, DESCRIPTION FROM H_ACTION INNER JOIN LEDS ON LEDS_LED_ID = LED_ID INNER JOIN USERS ON USERS_USER_ID = USER_ID ORDER BY DATETIME";
+        console.log(q);
+        const [rows] = await this.connection.promise().query(q);
+        return rows;
+    }
+
 }
 
 export default HActionDao;

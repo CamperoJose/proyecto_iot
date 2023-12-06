@@ -76,3 +76,7 @@ GET http://localhost:3000/api/v1/leds/count
 GET http://localhost:3000/api/v1/actions/count?userId=3&ledId=1&startDate=2023-01-01&endDate=2023-12-31&
 ###
 GET http://localhost:3000/api/v1/actions/count?startDate=2023-01-01&endDate=2023-12-31&
+###
+GET http://localhost:3000/api/v1/actions/summary
+###
+GET http://localhost:3000/api/v1/devices/summary

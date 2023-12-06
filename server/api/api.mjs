@@ -171,6 +171,28 @@ router.get('/actions/count', async (req, res) => {
     }
 });
 
+// RESUMEN DE TODOS LOS H_ACTIONS PARA EL CSV
+router.get('/actions/summary', async (req, res) => {
+    const hActionBl = new HActionBl();
+    try {
+        const actions = await hActionBl.summaryActions();
+        res.status(200).send(actions);
+    } catch (error) {
+        res.status(404).send(error.message);
+    }
+});
+
+// RESUMEN DE TODOS LOS DISPOSITIVOS REGISTRADOS
+router.get('/devices/summary', async (req, res) => {
+    const deviceBl = new DeviceBl();
+    try {
+        const devices = await deviceBl.summaryAllDevices();
+        res.status(200).send(devices);
+    } catch (error) {
+        res.status(404).send(error.message);
+    }
+});
+
 router.get('/currentDateTime', (req, res) => {
     const currentDateTime = new Date().toISOString().slice(0, 19).replace('T', ' ');
     res.status(200).send({ datetime: currentDateTime });

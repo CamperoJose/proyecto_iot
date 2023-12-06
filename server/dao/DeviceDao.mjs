@@ -57,6 +57,34 @@ class DeviceDao {
         return rows;
     }
 
+    async summaryAllDevices() {
+        const [rows] = await this.connection.promise().query(`
+            SELECT
+                D.DEVICE_NAME AS DeviceName,
+                D.IPV4 AS DeviceIPv4,
+                U.NAME AS OwnerName,
+                GROUP_CONCAT(CONCAT(S.SCOPE_NAME, ' ON ', L.LED_NAME) SEPARATOR '; ') AS GrantedScopes
+            FROM
+                DEVICES D
+            JOIN
+                USERS U ON D.USERS_USER_ID = U.USER_ID
+            LEFT JOIN
+                AUTHORIZATION A ON D.DEVICE_ID = A.DEVICES_DEVICE_ID
+            LEFT JOIN
+                SCOPES S ON A.SCOPES_SCOPE_ID = S.SCOPE_ID
+            LEFT JOIN
+                LEDS L ON A.LEDS_LED_ID = L.LED_ID
+            WHERE
+                D.GRANTED_CONN = 1
+            GROUP BY
+                D.DEVICE_ID
+            ORDER BY
+                D.DEVICE_NAME ASC;
+    
+        `);
+        return rows;
+    }
+
 }
 
 export default DeviceDao;

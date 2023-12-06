@@ -56,6 +56,10 @@ class DeviceBl {
         return await this.deviceDao.countLeds();
     }
 
+    async summaryAllDevices() {
+        return await this.deviceDao.summaryAllDevices();
+    }
+
 }
 
 export default DeviceBl;
