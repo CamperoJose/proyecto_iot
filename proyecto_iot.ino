@@ -19,13 +19,13 @@ bool led_on = false;
 String ip_local="";
 std::vector<String> successful_ips;
 String my_device = ""; 
-String my_ip_host_back = "192.168.0.7"; 
+String my_ip_host_back = "172.20.10.6"; 
 
 
 AsyncWebServer server(80);
 String getCurrentDateTimeFromServer() {
   HTTPClient http;
-  http.begin("http://"+my_ip_host_back+":3000/api/v1/currentDateTime");
+  http.begin("http://172.20.10.6:3000/api/v1/currentDateTime");
   int httpCode = http.GET();
 
   if (httpCode > 0) {
@@ -44,6 +44,60 @@ String getCurrentDateTimeFromServer() {
   }
 }
 
+
+void sendPostRequest(int ledId, int userId, const char* description) {
+  HTTPClient http;
+  http.begin("http://172.20.10.6:3000/api/v1/actions");
+  http.addHeader("Content-Type", "application/json");
+
+  DynamicJsonDocument doc(256);
+
+  
+  doc["description"] = description;
+  doc["datetime"] = getCurrentDateTimeFromServer();
+  doc["ledsLedId"] = ledId;
+  doc["usersUserId"] = userId;
+
+  String requestBody;
+  serializeJson(doc, requestBody);
+
+  int httpCode = http.POST(requestBody);
+
+  if (httpCode > 0) {
+    String payload = http.getString();
+    Serial.println("Respuesta POST: " + payload);
+  } else {
+    Serial.println("Error en la solicitud POST: " + String(httpCode));
+  }
+  
+  http.end();
+}
+
+
+
+
+void find_connected_devices() {
+  bool ret;
+  std::vector<String> current_successful_ips;
+  HTTPClient http;
+  http.begin("http://172.20.10.6:3000/api/v1/devices");  
+  int httpCode = http.GET();
+
+    String payload = http.getString();
+    Serial.println(payload);
+    
+    DynamicJsonDocument doc(2048);
+    deserializeJson(doc, payload);
+
+  for (int i = 1; i <= max_devices; i++) {
+    IPAddress ip(ip_surname[0], ip_surname[1], ip_surname[2], i);
+    ret = Ping.ping(ip, 2);
+    online_devices[i - 1] = ret;
+    String ipStr = ip.toString();
+    if (ret) {
+      Serial.print("Success: ");
+      Serial.println(ipStr);
+      current_successful_ips.push_back(ipStr);
 
 
 void setup()
