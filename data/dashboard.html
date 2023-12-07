@@ -92,6 +92,11 @@ select, input[type="date"] {
     width: 100%;
     display: flex;
     justify-content: center;
+    flex-direction: row;
+    flex-wrap: wrap;
+
+
+
 }
 
 .top-cards-container {
@@ -138,9 +143,9 @@ select, input[type="date"] {
     <div id="ledCount">Loading...</div>
   </div>
 
-  <button id="downloadButton">Download Data</button>
-  <button id="downloadReport">Download Report</button>
-  <button id="downloadScopes">Download Scopes</button>
+
+
+
   <div id="deviceCountChart" class="card">
     <!-- El gráfico de torta se mostrará aquí -->
   </div>
@@ -185,12 +190,29 @@ select, input[type="date"] {
   </div>
 </div>
 
+
 <div class="download-container">
   <button id="downloadButton" class="card download-card">
       <i class="fas fa-download icon"></i>
-      Download Data
+      Descargar Datos
   </button>
 </div>
+
+<div class="download-container">
+  <button id="downloadReport" class="card download-card">
+      <i class="fas fa-download icon"></i>
+      Descargar Reporte General
+  </button>
+</div>
+
+<div class="download-container">
+  <button id="downloadScopes" class="card download-card">
+      <i class="fas fa-download icon"></i>
+      Descargar Permisos
+  </button>
+</div>
+
+
 
   <script src="https://code.highcharts.com/highcharts.js"></script>
   <script>
